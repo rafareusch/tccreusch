@@ -1,0 +1,355 @@
+
+
+CpuManagerMulti (64-Bit) v20170201.0 Open Virtual Platform simulator from www.IMPERAS.com.
+Copyright (c) 2005-2017 Imperas Software Ltd.  Contains Imperas Proprietary Information.
+Licensed Software, All Rights Reserved.
+Visit www.IMPERAS.com for multicore debug, verification and analysis solutions.
+
+CpuManagerMulti started: Thu Nov 21 17:56:51 2019
+
+
+Hello from non-secure processor 2!
+RNS: Requiring write permission
+Info (RNS Tx require ) programControl/hBridge: Locking buffer to RNS2
+Info (RNS TX Register) programControl/hBridge: RNS2 is now transmitting!
+Ready to send!
+Info (TX Header Write) programControl/hBridge: Write to header data was 1!
+Info (TX Header Write) programControl/hBridge: Write to header data was 4!
+Info (TX Write) programControl/hBridge: Data:70
+Info (TX Write) programControl/hBridge: Data:85
+Info (TX Write) programControl/hBridge: Data:81
+Info (TX Write) programControl/hBridge: Data:83
+Info (TX Write) programControl/hBridge: End of transmission, ready to sent to secure region
+RNS: Requiring write permission
+Info (RNS Tx require ) programControl/hBridge: RNS2 is not allowed to send
+Hello from non-secure processor 1!
+RNS: Requiring write permission
+Hello World from secure-processor!!!
+Received interrupt. Starting handle
+
+############
+
+Info (Interrupt) programControl/hBridge: Write
+Entering in secure world
+NS - Entered in Super Monitor Call Handler!!! Operation is 1
+Writing 0x0 to ns bit
+Info (RX Enable register) programControl/hBridge: RS allowed transmission!
+Entered in secure world
+Info (Secure Register Header) programControl/hBridge:  Header read 0x8072b80 data is 1
+Info (Secure Register Header) programControl/hBridge:  Header read 0x8072b81 data is 0
+Info (Secure Register Header) programControl/hBridge:  Header read 0x8072b82 data is 0
+Info (Secure Register Header) programControl/hBridge:  Header read 0x8072b83 data is 0
+Info (Secure Register Header) programControl/hBridge:  Header read 0x8072b84 data is 4
+Info (Secure Register Header) programControl/hBridge:  Header read 0x8072b85 data is 0
+Info (Secure Register Header) programControl/hBridge:  Header read 0x8072b86 data is 0
+Info (Secure Register Header) programControl/hBridge:  Header read 0x8072b87 data is 0
+Info (Secure Register Header) programControl/hBridge:  Header reset
+Reading message of 4
+####
+RECEIVED WAS:
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: No message in buffer, releasing to any port write
+FUQS
+######
+Info (RX Enable register) programControl/hBridge: RS allowed transmission!
+NS - Entered in Super Monitor Call Handler!!! Operation is 2
+Writing 1 to ns bit
+Entered in non secure world
+Exiting irq exception
+
+############
+
+fib(0) = 0
+fib(1) = 1
+fib(2) = 1
+fib(3) = 2
+fib(4) = 3
+fib(5) = 5
+fib(6) = 8
+fib(7) = 13
+fib(8) = 21
+fib(9) = 34
+fib(10) = 55
+fib(11) = 89
+fib(12) = 144
+fib(13) = 233
+Info (RNS TX Register) programControl/hBridge: RNS2 is now transmitting!
+Ready to send!
+Info (TX Header Write) programControl/hBridge: Write to header data was 1!
+Info (TX Header Write) programControl/hBridge: Write to header data was 6!
+Info (TX Write) programControl/hBridge: Data:83
+Info (TX Write) programControl/hBridge: Data:85
+Info (TX Write) programControl/hBridge: Data:81
+Info (TX Write) programControl/hBridge: Data:83
+Info (TX Write) programControl/hBridge: Data:83
+Info (TX Write) programControl/hBridge: Data:83
+Info (TX Write) programControl/hBridge: End of transmission, ready to sent to secure region
+Received interrupt. Starting handle
+
+############
+
+Info (Interrupt) programControl/hBridge: Write
+Entering in secure world
+NS - Entered in Super Monitor Call Handler!!! Operation is 1
+Writing 0x0 to ns bit
+Info (RX Enable register) programControl/hBridge: RS allowed transmission!
+Entered in secure world
+Info (Secure Register Header) programControl/hBridge:  Header read 0x8072b80 data is 1
+Info (Secure Register Header) programControl/hBridge:  Header read 0x8072b81 data is 0
+Info (Secure Register Header) programControl/hBridge:  Header read 0x8072b82 data is 0
+Info (Secure Register Header) programControl/hBridge:  Header read 0x8072b83 data is 0
+Info (Secure Register Header) programControl/hBridge:  Header read 0x8072b84 data is 6
+Info (Secure Register Header) programControl/hBridge:  Header read 0x8072b85 data is 0
+Info (Secure Register Header) programControl/hBridge:  Header read 0x8072b86 data is 0
+Info (Secure Register Header) programControl/hBridge:  Header read 0x8072b87 data is 0
+Info (Secure Register Header) programControl/hBridge:  Header reset
+Reading message of 6
+####
+RECEIVED WAS:
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: No message in buffer, releasing to any port write
+SUQSSS
+######
+Info (RX Enable register) programControl/hBridge: RS allowed transmission!
+NS - Entered in Super Monitor Call Handler!!! Operation is 2
+Writing 1 to ns bit
+Entered in non secure world
+Exiting irq exception
+
+############
+
+fib(0) = 0
+fib(1) = 1
+fib(2) = 1
+fib(3) = 2
+fib(4) = 3
+fib(5) = 5
+fib(6) = 8
+fib(7) = 13
+fib(8) = 21
+fib(9) = 34
+fib(10) = 55
+fib(11) = 89
+fib(12) = 144
+fib(13) = 233
+fib(14) = 377
+Info (RNS TX Register) programControl/hBridge: RNS1 is now transmitting!
+Ready to send!
+Info (TX Header Write) programControl/hBridge: Write to header data was 0!
+Info (TX Header Write) programControl/hBridge: Write to header data was 5!
+Info (TX Write) programControl/hBridge: Data:72
+Info (TX Write) programControl/hBridge: Data:69
+Info (TX Write) programControl/hBridge: Data:76
+Info (TX Write) programControl/hBridge: Data:73
+Info (TX Write) programControl/hBridge: Data:79
+Info (TX Write) programControl/hBridge: End of transmission, ready to sent to secure region
+RNS: Requiring write permission
+Received interrupt. Starting handle
+
+############
+
+Info (Interrupt) programControl/hBridge: Write
+Entering in secure world
+NS - Entered in Super Monitor Call Handler!!! Operation is 1
+Writing 0x0 to ns bit
+Info (RX Enable register) programControl/hBridge: RS allowed transmission!
+Entered in secure world
+Info (Secure Register Header) programControl/hBridge:  Header read 0x8072b80 data is 0
+Info (Secure Register Header) programControl/hBridge:  Header read 0x8072b81 data is 0
+Info (Secure Register Header) programControl/hBridge:  Header read 0x8072b82 data is 0
+Info (Secure Register Header) programControl/hBridge:  Header read 0x8072b83 data is 0
+Info (Secure Register Header) programControl/hBridge:  Header read 0x8072b84 data is 5
+Info (Secure Register Header) programControl/hBridge:  Header read 0x8072b85 data is 0
+Info (Secure Register Header) programControl/hBridge:  Header read 0x8072b86 data is 0
+Info (Secure Register Header) programControl/hBridge:  Header read 0x8072b87 data is 0
+Info (Secure Register Header) programControl/hBridge:  Header reset
+Reading message of 5
+####
+RECEIVED WAS:
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: No message in buffer, releasing to any port write
+HELIO
+######
+Info (RX Enable register) programControl/hBridge: RS allowed transmission!
+NS - Entered in Super Monitor Call Handler!!! Operation is 2
+Writing 1 to ns bit
+Entered in non secure world
+Exiting irq exception
+
+############
+
+fib(0) = 0
+fib(1) = 1
+fib(2) = 1
+fib(3) = 2
+fib(4) = 3
+fib(5) = 5
+fib(6) = 8
+fib(7) = 13
+fib(8) = 21
+fib(9) = 34
+fib(10) = 55
+fib(11) = 89
+fib(12) = 144
+fib(13) = 233
+fib(14) = 377
+Info (RNS TX Register) programControl/hBridge: RNS1 is now transmitting!
+Ready to send!
+Info (TX Header Write) programControl/hBridge: Write to header data was 0!
+Info (TX Header Write) programControl/hBridge: Write to header data was 4!
+Info (TX Write) programControl/hBridge: Data:98
+Info (TX Write) programControl/hBridge: Data:105
+Info (TX Write) programControl/hBridge: Data:98
+Info (TX Write) programControl/hBridge: Data:105
+Info (TX Write) programControl/hBridge: End of transmission, ready to sent to secure region
+RNS: Requiring write permission
+Received interrupt. Starting handle
+
+############
+
+Info (Interrupt) programControl/hBridge: Write
+Entering in secure world
+NS - Entered in Super Monitor Call Handler!!! Operation is 1
+Writing 0x0 to ns bit
+Info (RX Enable register) programControl/hBridge: RS allowed transmission!
+Entered in secure world
+Info (Secure Register Header) programControl/hBridge:  Header read 0x8072b80 data is 0
+Info (Secure Register Header) programControl/hBridge:  Header read 0x8072b81 data is 0
+Info (Secure Register Header) programControl/hBridge:  Header read 0x8072b82 data is 0
+Info (Secure Register Header) programControl/hBridge:  Header read 0x8072b83 data is 0
+Info (Secure Register Header) programControl/hBridge:  Header read 0x8072b84 data is 4
+Info (Secure Register Header) programControl/hBridge:  Header read 0x8072b85 data is 0
+Info (Secure Register Header) programControl/hBridge:  Header read 0x8072b86 data is 0
+Info (Secure Register Header) programControl/hBridge:  Header read 0x8072b87 data is 0
+Info (Secure Register Header) programControl/hBridge:  Header reset
+Reading message of 4
+####
+RECEIVED WAS:
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: No message in buffer, releasing to any port write
+bibi
+######
+Info (RX Enable register) programControl/hBridge: RS allowed transmission!
+NS - Entered in Super Monitor Call Handler!!! Operation is 2
+Writing 1 to ns bit
+Entered in non secure world
+Exiting irq exception
+
+############
+
+fib(0) = 0
+fib(1) = 1
+fib(2) = 1
+fib(3) = 2
+fib(4) = 3
+fib(5) = 5
+fib(6) = 8
+fib(7) = 13
+fib(8) = 21
+fib(9) = 34
+fib(10) = 55
+fib(11) = 89
+fib(12) = 144
+fib(13) = 233
+fib(14) = 377
+Info (RNS TX Register) programControl/hBridge: RNS1 is now transmitting!
+Ready to send!
+Info (TX Header Write) programControl/hBridge: Write to header data was 0!
+Info (TX Header Write) programControl/hBridge: Write to header data was 4!
+Info (TX Write) programControl/hBridge: Data:99
+Info (TX Write) programControl/hBridge: Data:111
+Info (TX Write) programControl/hBridge: Data:98
+Info (TX Write) programControl/hBridge: Data:105
+Info (TX Write) programControl/hBridge: End of transmission, ready to sent to secure region
+Received interrupt. Starting handle
+
+############
+
+Info (Interrupt) programControl/hBridge: Write
+Entering in secure world
+NS - Entered in Super Monitor Call Handler!!! Operation is 1
+Writing 0x0 to ns bit
+Info (RX Enable register) programControl/hBridge: RS allowed transmission!
+Entered in secure world
+Info (Secure Register Header) programControl/hBridge:  Header read 0x8072b80 data is 0
+Info (Secure Register Header) programControl/hBridge:  Header read 0x8072b81 data is 0
+Info (Secure Register Header) programControl/hBridge:  Header read 0x8072b82 data is 0
+Info (Secure Register Header) programControl/hBridge:  Header read 0x8072b83 data is 0
+Info (Secure Register Header) programControl/hBridge:  Header read 0x8072b84 data is 4
+Info (Secure Register Header) programControl/hBridge:  Header read 0x8072b85 data is 0
+Info (Secure Register Header) programControl/hBridge:  Header read 0x8072b86 data is 0
+Info (Secure Register Header) programControl/hBridge:  Header read 0x8072b87 data is 0
+Info (Secure Register Header) programControl/hBridge:  Header reset
+Reading message of 4
+####
+RECEIVED WAS:
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: No message in buffer, releasing to any port write
+cobi
+######
+Info (RX Enable register) programControl/hBridge: RS allowed transmission!
+NS - Entered in Super Monitor Call Handler!!! Operation is 2
+Writing 1 to ns bit
+Entered in non secure world
+Exiting irq exception
+
+############
+
+fib(0) = 0
+fib(1) = 1
+fib(2) = 1
+fib(3) = 2
+fib(4) = 3
+fib(5) = 5
+fib(6) = 8
+fib(7) = 13
+fib(8) = 21
+fib(9) = 34
+fib(10) = 55
+fib(11) = 89
+fib(12) = 144
+fib(13) = 233
+fib(14) = 377
+fib(15) = 610
+fib(16) = 987
+fib(17) = 1597
+fib(18) = 2584
+fib(19) = 4181
+fib(20) = 6765
+fib(21) = 10946
+fib(22) = 17711
+fib(23) = 28657
+fib(24) = 46368
+fib(25) = 75025
+fib(26) = 121393
+fib(27) = 196418
+fib(28) = 317811
+fib(29) = 514229
+fib(30) = 832040
+fib(31) = 1346269
+Finished fibonatti
+NS - Entered in Super Monitor Call Handler!!! Operation is 1
+Writing 0x0 to ns bit
+First data in secure space c
+
+NS - Entered in Super Monitor Call Handler!!! Operation is 1
+Writing 0x0 to ns bit
+fib(0) = 0

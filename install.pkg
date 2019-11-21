@@ -1,0 +1,3 @@
+install RUNTIME CpuManager
+install armv7.toolchain
+install Imperas.iGen
