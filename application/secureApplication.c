@@ -264,19 +264,13 @@ void boot()
     setSVCHandler();
     
 
-    enterNonSecure();
     // Boot for unsecure world
-    CPU_INIT();
+    //CPU_INIT();
+    //setSVCHandler();
     
-    setupTranslationTable();
-    enableTLB();
-    
-    setSVCHandler();
-
+    enterNonSecure();   
     REGISTER_ISR(irq, irq_handler, (void *)NULL);
-    ENABLE_INTERRUPTS();
-    
-    asm("SVC #0x0\n");
+    ENABLE_INTERRUPTS(); 
 }
 
 void run()
