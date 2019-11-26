@@ -8,7 +8,7 @@
     releasestatus="4"
     saveRestore="F"
     vendor="defaultVendor"
-    version="0.69"
+    version="0.1"
     visibility="0">
     <netport name="enable"
         type="input"
@@ -42,23 +42,23 @@
                 size="0x1"/>
         </addressblock>
     </busslaveport>
-    <netport name="interruptRequest"
+    <netport name="newMessageAvailable"
         type="output"
         updatefunctionargument="0"/>
     <busslaveport addresswidth="32"
-        name="txNonSecurePort"
+        name="rxNonSecurePort1"
         size="0xc">
-        <addressblock name="txRegs"
+        <addressblock name="rxRegs"
             size="0xc"
             width="8">
             <memorymappedregister access="w"
                 isvolatile="T"
-                name="tx_req"
+                name="rx_req"
                 width="8"
                 writefunction="writeTxReq"/>
             <memorymappedregister access="r"
                 isvolatile="T"
-                name="tx_ack"
+                name="rx_ack"
                 offset="0x1"
                 readfunction="readTxAck"
                 width="8"/>
@@ -77,19 +77,19 @@
         </addressblock>
     </busslaveport>
     <busslaveport addresswidth="32"
-        name="txNonSecurePort2"
+        name="rxNonSecurePort2"
         size="0xc">
-        <addressblock name="txRegs"
+        <addressblock name="rxRegs"
             size="0xc"
             width="8">
             <memorymappedregister access="w"
                 isvolatile="T"
-                name="tx_req"
+                name="rx_req"
                 width="8"
                 writefunction="writeTxReqRNS2"/>
             <memorymappedregister access="r"
                 isvolatile="T"
-                name="tx_ack"
+                name="rx_ack"
                 offset="0x1"
                 readfunction="readTxAckRNS2"
                 width="8"/>

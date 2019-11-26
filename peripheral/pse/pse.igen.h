@@ -60,53 +60,53 @@ typedef struct readSecurePort_regs_dataS {
     } ns_interrupt_ack;
 } readSecurePort_regs_dataT, *readSecurePort_regs_dataTP;
 
-typedef struct txNonSecurePort_txRegs_dataS { 
+typedef struct rxNonSecurePort1_rxRegs_dataS { 
     union { 
         Uns8 value;
-    } tx_req;
+    } rx_req;
     union { 
         Uns8 value;
-    } tx_ack;
+    } rx_ack;
     union { 
         Uns8 value;
     } dataTxLocalHeader;
     union { 
         Uns8 value;
     } dataTxLocal;
-} txNonSecurePort_txRegs_dataT, *txNonSecurePort_txRegs_dataTP;
+} rxNonSecurePort1_rxRegs_dataT, *rxNonSecurePort1_rxRegs_dataTP;
 
-typedef struct txNonSecurePort2_txRegs_dataS { 
+typedef struct rxNonSecurePort2_rxRegs_dataS { 
     union { 
         Uns8 value;
-    } tx_req;
+    } rx_req;
     union { 
         Uns8 value;
-    } tx_ack;
+    } rx_ack;
     union { 
         Uns8 value;
     } dataTxLocalHeader;
     union { 
         Uns8 value;
     } dataTxLocal;
-} txNonSecurePort2_txRegs_dataT, *txNonSecurePort2_txRegs_dataTP;
+} rxNonSecurePort2_rxRegs_dataT, *rxNonSecurePort2_rxRegs_dataTP;
 
 /////////////////////////////// Port Declarations //////////////////////////////
 
 extern readSecurePort_regs_dataT readSecurePort_regs_data;
 
-extern txNonSecurePort_txRegs_dataT txNonSecurePort_txRegs_data;
+extern rxNonSecurePort1_rxRegs_dataT rxNonSecurePort1_rxRegs_data;
 
-extern txNonSecurePort2_txRegs_dataT txNonSecurePort2_txRegs_data;
+extern rxNonSecurePort2_rxRegs_dataT rxNonSecurePort2_rxRegs_data;
 
 #ifdef _PSE_
 ///////////////////////////////// Port handles /////////////////////////////////
 
 typedef struct handlesS {
     void                 *readSecurePort;
-    void                 *txNonSecurePort;
-    void                 *txNonSecurePort2;
+    void                 *rxNonSecurePort1;
+    void                 *rxNonSecurePort2;
     ppmNetHandle          enable;
-    ppmNetHandle          interruptRequest;
+    ppmNetHandle          newMessageAvailable;
 } handlesT, *handlesTP;
 
 extern handlesT handles;

@@ -102,22 +102,6 @@ void arm7_cpu_init(void)
                    : "r" (&fiq_stack[FIQ_STACK_SIZE-1])/* input */
                    : "r0", "r1" /* clobber */
                   );
-
-    asm volatile (
-                   "MOV     R1, %0\n\t"
-                   "MRS     R0, CPSR\n\t"
-                   "BIC     R0, R0, #0x1F\n\t"
-                   "ORR     R0, R0, #" S_OF(ARM7_PSR_MODE_IRQ) "\n\t"
-                   "MSR     CPSR, R0\n\t"
-                   "MOV     SP, R1\n\t"
-                   "BIC     R0, R0, #0x1F\n\t"
-                   "ORR     R0, R0, #" S_OF(ARM7_PSR_MODE_SVC) "\n\t"
-                   "MSR     CPSR, R0"
-                   : /* output */
-                   : "r" (&irq_stack[FIQ_STACK_SIZE-1])/* input */
-                   : "r0", "r1" /* clobber */
-                  );
-
     
     IO32_WR(vBase, fiqVector, makeBranchOp(fiqVector, (Uns32)&arm7_fiq_handler_asm));
     IO32_WR(vBase, irqVector, makeBranchOp(irqVector, (Uns32)&arm7_irq_handler_asm));

@@ -15,45 +15,11 @@ int main()
 {
     enterNonSecure();
     printf("Hello from non-secure processor 1!\n");
-    requireToSend();
-    
-    // sender is 1
-    *RG_TX_WRITE_HEADER = 0;
-    
-    // size is 5
-    *RG_TX_WRITE_HEADER = 5;
-    
-    *RG_TX_WRITE_DATA = 'H';
-    *RG_TX_WRITE_DATA = 'E';
-    *RG_TX_WRITE_DATA = 'L';
-    *RG_TX_WRITE_DATA = 'I';
-    *RG_TX_WRITE_DATA = 'O';
-    
-
 
     requireToSend();
-    
-    // sender is 1
-    *RG_TX_WRITE_HEADER = 0;
-    
-    // size is 5
-    *RG_TX_WRITE_HEADER = 4;
-    
-    *RG_TX_WRITE_DATA = 'b';
-    *RG_TX_WRITE_DATA = 'i';
-    *RG_TX_WRITE_DATA = 'b';
-    *RG_TX_WRITE_DATA = 'i';
+    sendMessage(7,0, "Example");
 
-        requireToSend();
     
-    // sender is 1
-    *RG_TX_WRITE_HEADER = 0;
-    
-    // size is 5
-    *RG_TX_WRITE_HEADER = 4;
-    
-    *RG_TX_WRITE_DATA = 'c';
-    *RG_TX_WRITE_DATA = 'o';
-    *RG_TX_WRITE_DATA = 'b';
-    *RG_TX_WRITE_DATA = 'i';
+    requireToSend();
+    sendMessage(12,0, "RNS2-Message");
 }

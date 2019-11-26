@@ -105,7 +105,7 @@ ihwconnect   -instancename ramRNS2 -busslaveport sp1 -bus pBusRNS2 \
 ihwaddperipheral -instancename hBridge -type HelioDynamicBridge -modelfile peripheral/pse
 
 ihwconnect       -instancename hBridge -netport enable -net tzpcdecprot0_0
-ihwconnect       -instancename hBridge -netport interruptRequest -net fiq_
+ihwconnect       -instancename hBridge -netport newMessageAvailable -net fiq_
 
 ihwsetparameter    -handle       hBridge -name portSize    -value        0x1000   \
 -type uns64
@@ -113,10 +113,10 @@ ihwsetparameter    -handle       hBridge -name portSize    -value        0x1000 
 ihwconnect      -instancename hBridge -busslaveport readSecurePort -bus pBusRS \
                 -loaddress 0x11001000 -hiaddress 0x11001007
 
-ihwconnect      -instancename hBridge -busslaveport txNonSecurePort \
+ihwconnect      -instancename hBridge -busslaveport rxNonSecurePort1 \
                  -bus pBus -loaddress 0x11001000 -hiaddress 0x1100100b
                 
-ihwconnect      -instancename hBridge -busslaveport txNonSecurePort2 \
+ihwconnect      -instancename hBridge -busslaveport rxNonSecurePort2 \
                  -bus pBusRNS2 -loaddress 0x11001000 -hiaddress 0x1100100b
 
                 

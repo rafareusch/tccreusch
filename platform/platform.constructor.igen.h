@@ -248,9 +248,9 @@ void platformConstructor(void) {
 
     icmConnectPSEBus( handles.hBridge_p, handles.pBusRS_b, "readSecurePort", 0, 0x11001000, 0x11001007);
 
-    icmConnectPSEBus( handles.hBridge_p, handles.pBus_b, "txNonSecurePort", 0, 0x11001000, 0x1100100b);
+    icmConnectPSEBus( handles.hBridge_p, handles.pBus_b, "rxNonSecurePort1", 0, 0x11001000, 0x1100100b);
 
-    icmConnectPSEBus( handles.hBridge_p, handles.pBusRNS2_b, "txNonSecurePort2", 0, 0x11001000, 0x1100100b);
+    icmConnectPSEBus( handles.hBridge_p, handles.pBusRNS2_b, "rxNonSecurePort2", 0, 0x11001000, 0x1100100b);
 
     icmConnectProcessorBusByName( handles.RScpu_c, "INSTRUCTION", handles.tzBus_b );
 
@@ -330,7 +330,7 @@ void platformConstructor(void) {
 
     icmConnectProcessorNet( handles.RScpu_c, handles.fiq__n, "irq", 0);
 
-    icmConnectPSENet( handles.hBridge_p, handles.fiq__n, "interruptRequest", 0);
+    icmConnectPSENet( handles.hBridge_p, handles.fiq__n, "newMessageAvailable", 0);
 
 ////////////////////////////////////////////////////////////////////////////////
     handles.tzpcdecprot0_0_n = icmNewNet("tzpcdecprot0_0" );

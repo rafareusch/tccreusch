@@ -28,9 +28,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "pse.igen.h"
-#define TXNONSECUREPORT2
+#define RXNONSECUREPORT2
 #define READSECUREPORT
-#define TXNONSECUREPORT
+#define RXNONSECUREPORT1
 #include "pse.macros.igen.h"
 #include <string.h>
 
@@ -44,6 +44,7 @@
 #define RNSID1 0
 #define RNSID2 1
 
+#define HEADER_SIZE 8
 // Uns32 stackA[size];
 // Uns32 stackB[size]; 
 
@@ -55,7 +56,7 @@ SimAddr mpSLoAddress;
 SimAddr spNSLoAddress;
 
 Uns64   portSize;
-Bool    bridgeEnabled = False;
+Bool    transmissionEnabled = False;
 Bool    newMessage = False;
 
 enum
@@ -108,14 +109,22 @@ void requireToSend(int rnsRequiring, int data)
 //////////////////////////////// Callback stubs ////////////////////////////////
 
 PPM_NET_CB(updateEnable) {
-    bhmMessage("I","RX Enable register","RS allowed transmission!");
-    bridgeEnabled = value;
+    if(value == 1)
+    {
+        bhmMessage("I","RX Enable register","RS allowed transmission!");
+    }
+    else
+    {
+        bhmMessage("I","RX Enable register","RS disabled transmission!");
+    }
+    
+    transmissionEnabled = value;
 }
 
 PPM_REG_WRITE_CB(interruptWrite) 
 {
-    bhmMessage("I","Interrupt","Write");
-    ppmWriteNet(handles.interruptRequest, 0);
+    bhmMessage("I","Interrupt","Received Interrupt ACK");
+    ppmWriteNet(handles.newMessageAvailable, 0);
 }
 
 PPM_REG_READ_CB(interruptRead) 
@@ -130,10 +139,9 @@ PPM_READ_CB(dataHeaderRead)
     static char offset = 0;
     char *ret = (char*)(&header);
     ret = ret + offset;
-    
-    bhmMessage("I","Secure Register Header"," Header read %p data is %d", ret, (int)*ret);
     offset++;
-    if(offset == 8)
+
+    if(offset == HEADER_SIZE)
     {
         bhmMessage("I","Secure Register Header"," Header reset");
         offset = 0;
@@ -141,12 +149,12 @@ PPM_READ_CB(dataHeaderRead)
     return *ret;
 }
 
-// tbd
-int dataReadCount = 0;
+
 PPM_READ_CB(dataRead)
 {
+    static int dataReadCount = 0;
     char rtValue = 0;
-    if(bridgeEnabled)
+    if(transmissionEnabled)
     {
         if(dataReadCount < header.messageSize)
         {
@@ -156,7 +164,6 @@ PPM_READ_CB(dataRead)
             prtValue = &((char*)handles.readSecurePort)[READSECUREPORT_REGS_NS_DATA_OFFSET];
             prtValue = prtValue + dataReadCount;
             rtValue = *prtValue;
-            
             dataReadCount++;
         }
         
@@ -172,7 +179,6 @@ PPM_READ_CB(dataRead)
     {
         bhmMessage("I","Secure buffer data","data transfer is disabled");
     }
-    
 
     return rtValue;
 }
@@ -242,21 +248,20 @@ PPM_REG_WRITE_CB(txWriteHeader)
 //write data
 PPM_REG_WRITE_CB(txWrite)
 {
-    static int rns1WriteOffset = 0;
+    static int rnsWriteOffset = 0;
     // only allow data if this port is transmitting
     if(rnsRequest[header.sender] == TRANSMITTING)
     {
-        if(rns1WriteOffset < header.messageSize)
+        if(rnsWriteOffset < header.messageSize)
         {
-            ((char*)handles.readSecurePort)[READSECUREPORT_REGS_NS_DATA_OFFSET + rns1WriteOffset] = data;
-            rns1WriteOffset++;
-            bhmMessage("I","TX Write","Data:%d",data);
+            ((char*)handles.readSecurePort)[READSECUREPORT_REGS_NS_DATA_OFFSET + rnsWriteOffset] = data;
+            rnsWriteOffset++;
         }
-        if(rns1WriteOffset == header.messageSize)
+        if(rnsWriteOffset == header.messageSize)
         {
-            bhmMessage("I","TX Write","End of transmission, ready to sent to secure region");
-            ppmWriteNet(handles.interruptRequest, 1);
-            rns1WriteOffset = 0;
+            bhmMessage("I","TX Write","End of transmission, generating interrupt to secure processor!");
+            ppmWriteNet(handles.newMessageAvailable, 1);
+            rnsWriteOffset = 0;
         }
     }
     else
@@ -289,7 +294,6 @@ PPM_REG_READ_CB(readTxAck)
 
 
 //callback to RNS port 2
-
 PPM_REG_READ_CB(readTxAckRNS2) {
     
     return canGivenRNSTransmit(RNSID2);

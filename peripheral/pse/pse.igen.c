@@ -32,9 +32,9 @@
 
 readSecurePort_regs_dataT readSecurePort_regs_data;
 
-txNonSecurePort_txRegs_dataT txNonSecurePort_txRegs_data;
+rxNonSecurePort1_rxRegs_dataT rxNonSecurePort1_rxRegs_data;
 
-txNonSecurePort2_txRegs_dataT txNonSecurePort2_txRegs_data;
+rxNonSecurePort2_rxRegs_dataT rxNonSecurePort2_rxRegs_data;
 
 handlesT handles;
 
@@ -67,9 +67,9 @@ static void installSlavePorts(void) {
 
     ppmInstallReadCallback(dataHeaderRead, (void*)0x0 , handles.readSecurePort + 0x1, 0x2);
     ppmInstallReadCallback(dataRead, (void*)0x0 , handles.readSecurePort + 0x3, 0x1);
-    handles.txNonSecurePort = ppmCreateSlaveBusPort("txNonSecurePort", 12);
+    handles.rxNonSecurePort1 = ppmCreateSlaveBusPort("rxNonSecurePort1", 12);
 
-    handles.txNonSecurePort2 = ppmCreateSlaveBusPort("txNonSecurePort2", 12);
+    handles.rxNonSecurePort2 = ppmCreateSlaveBusPort("rxNonSecurePort2", 12);
 
 }
 
@@ -89,93 +89,93 @@ static void installRegisters(void) {
         True
     );
 
-    ppmCreateRegister("txRegs_tx_req",
+    ppmCreateRegister("rxRegs_rx_req",
         0,
-        handles.txNonSecurePort,
+        handles.rxNonSecurePort1,
         0,
         1,
         0,
         writeTxReq,
         view8,
-        &(txNonSecurePort_txRegs_data.tx_req.value),
+        &(rxNonSecurePort1_rxRegs_data.rx_req.value),
         True
     );
-    ppmCreateRegister("txRegs_tx_ack",
+    ppmCreateRegister("rxRegs_rx_ack",
         0,
-        handles.txNonSecurePort,
+        handles.rxNonSecurePort1,
         1,
         1,
         readTxAck,
         0,
         view8,
-        &(txNonSecurePort_txRegs_data.tx_ack.value),
+        &(rxNonSecurePort1_rxRegs_data.rx_ack.value),
         True
     );
-    ppmCreateRegister("txRegs_dataTxLocalHeader",
+    ppmCreateRegister("rxRegs_dataTxLocalHeader",
         0,
-        handles.txNonSecurePort,
+        handles.rxNonSecurePort1,
         2,
         1,
         0,
         txWriteHeader,
         view8,
-        &(txNonSecurePort_txRegs_data.dataTxLocalHeader.value),
+        &(rxNonSecurePort1_rxRegs_data.dataTxLocalHeader.value),
         True
     );
-    ppmCreateRegister("txRegs_dataTxLocal",
+    ppmCreateRegister("rxRegs_dataTxLocal",
         0,
-        handles.txNonSecurePort,
+        handles.rxNonSecurePort1,
         4,
         1,
         0,
         txWrite,
         view8,
-        &(txNonSecurePort_txRegs_data.dataTxLocal.value),
+        &(rxNonSecurePort1_rxRegs_data.dataTxLocal.value),
         True
     );
 
-    ppmCreateRegister("txRegs_tx_req",
+    ppmCreateRegister("rxRegs_rx_req",
         0,
-        handles.txNonSecurePort2,
+        handles.rxNonSecurePort2,
         0,
         1,
         0,
         writeTxReqRNS2,
         view8,
-        &(txNonSecurePort2_txRegs_data.tx_req.value),
+        &(rxNonSecurePort2_rxRegs_data.rx_req.value),
         True
     );
-    ppmCreateRegister("txRegs_tx_ack",
+    ppmCreateRegister("rxRegs_rx_ack",
         0,
-        handles.txNonSecurePort2,
+        handles.rxNonSecurePort2,
         1,
         1,
         readTxAckRNS2,
         0,
         view8,
-        &(txNonSecurePort2_txRegs_data.tx_ack.value),
+        &(rxNonSecurePort2_rxRegs_data.rx_ack.value),
         True
     );
-    ppmCreateRegister("txRegs_dataTxLocalHeader",
+    ppmCreateRegister("rxRegs_dataTxLocalHeader",
         0,
-        handles.txNonSecurePort2,
+        handles.rxNonSecurePort2,
         2,
         1,
         0,
         txWriteHeader,
         view8,
-        &(txNonSecurePort2_txRegs_data.dataTxLocalHeader.value),
+        &(rxNonSecurePort2_rxRegs_data.dataTxLocalHeader.value),
         True
     );
-    ppmCreateRegister("txRegs_dataTxLocal",
+    ppmCreateRegister("rxRegs_dataTxLocal",
         0,
-        handles.txNonSecurePort2,
+        handles.rxNonSecurePort2,
         4,
         1,
         0,
         txWrite,
         view8,
-        &(txNonSecurePort2_txRegs_data.dataTxLocal.value),
+        &(rxNonSecurePort2_rxRegs_data.dataTxLocal.value),
         True
     );
 
@@ -189,9 +189,9 @@ static void installNetPorts(void) {
         ppmInstallNetCallback(handles.enable, updateEnable, (void*)0);
     }
 
-// To write to this net, use ppmWriteNet(handles.interruptRequest, value);
+// To write to this net, use ppmWriteNet(handles.newMessageAvailable, value);
 
-    handles.interruptRequest = ppmOpenNetPort("interruptRequest");
+    handles.newMessageAvailable = ppmOpenNetPort("newMessageAvailable");
 
 }
 

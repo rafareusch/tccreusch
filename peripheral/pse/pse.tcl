@@ -15,7 +15,7 @@ The output bus width is hard coded to be 32 bits."
 imodelnewperipheral  \
     -name        HelioDynamicBridge \
     -library     peripheral \
-    -version     0.69 \
+    -version     0.1 \
     -constructor constructor\
     -releasestatus ovp        \
     -visibility    visible 
@@ -64,41 +64,41 @@ imodeladdlocalmemory -name ns_data \
                      -size 1
 
 ### 
-imodeladdnetport -name interruptRequest -type output 
+imodeladdnetport -name newMessageAvailable -type output 
 
 
 # Non secure registers - RNS1
 
-imodeladdbusslaveport -name txNonSecurePort 
+imodeladdbusslaveport -name rxNonSecurePort1 
 
-imodeladdaddressblock -name txRegs   \
-                       -port txNonSecurePort \
+imodeladdaddressblock -name rxRegs   \
+                       -port rxNonSecurePort1 \
                        -offset 0x0  \
                        -width 8    \
                        -size 12
 
-imodeladdmmregister  -name tx_req \
-                     -addressblock txNonSecurePort/txRegs \
+imodeladdmmregister  -name rx_req \
+                     -addressblock rxNonSecurePort1/rxRegs \
                      -writefunction writeTxReq \
                      -offset 0x0 \
                      -access w 
 
-imodeladdmmregister  -name tx_ack \
-                     -addressblock txNonSecurePort/txRegs \
+imodeladdmmregister  -name rx_ack \
+                     -addressblock rxNonSecurePort1/rxRegs \
                      -readfunction  readTxAck \
                      -offset 0x1 \
                      -access r
 
 
 imodeladdmmregister  -name dataTxLocalHeader \
-                     -addressblock txNonSecurePort/txRegs \
+                     -addressblock rxNonSecurePort1/rxRegs \
                      -writefunction  txWriteHeader \
                      -offset 0x2 \
                      -width 2 \
                      -access w
 
 imodeladdmmregister  -name dataTxLocal \
-                     -addressblock txNonSecurePort/txRegs \
+                     -addressblock rxNonSecurePort1/rxRegs \
                      -writefunction  txWrite \
                      -offset 0x4 \
                      -access w
@@ -106,36 +106,36 @@ imodeladdmmregister  -name dataTxLocal \
                      
 # Non secure registers - RNS2
 
-imodeladdbusslaveport -name txNonSecurePort2
+imodeladdbusslaveport -name rxNonSecurePort2
 
-imodeladdaddressblock -name txRegs   \
-                       -port txNonSecurePort2 \
+imodeladdaddressblock -name rxRegs   \
+                       -port rxNonSecurePort2 \
                        -offset 0x0  \
                        -width 8    \
                        -size 12
 
-imodeladdmmregister  -name tx_req \
-                     -addressblock txNonSecurePort2/txRegs \
+imodeladdmmregister  -name rx_req \
+                     -addressblock rxNonSecurePort2/rxRegs \
                      -writefunction writeTxReqRNS2 \
                      -offset 0x0 \
                      -access w 
 
-imodeladdmmregister  -name tx_ack \
-                     -addressblock txNonSecurePort2/txRegs \
+imodeladdmmregister  -name rx_ack\
+                     -addressblock rxNonSecurePort2/rxRegs \
                      -readfunction  readTxAckRNS2 \
                      -offset 0x1 \
                      -access r
 
 
 imodeladdmmregister  -name dataTxLocalHeader \
-                     -addressblock txNonSecurePort2/txRegs \
+                     -addressblock rxNonSecurePort2/rxRegs \
                      -writefunction  txWriteHeader \
                      -offset 0x2 \
                      -width 2 \
                      -access w
 
 imodeladdmmregister  -name dataTxLocal \
-                     -addressblock txNonSecurePort2/txRegs \
+                     -addressblock rxNonSecurePort2/rxRegs \
                      -writefunction  txWrite \
                      -offset 0x4 \
                      -access w

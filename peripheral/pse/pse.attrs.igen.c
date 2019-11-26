@@ -48,7 +48,7 @@ static ppmBusPort busPorts[] = {
         .description     = 0,
     },
     {
-        .name            = "txNonSecurePort",
+        .name            = "rxNonSecurePort1",
         .type            = PPM_SLAVE_PORT,
         .addrHi          = 0xbLL,
         .mustBeConnected = 0,
@@ -56,7 +56,7 @@ static ppmBusPort busPorts[] = {
         .description     = 0,
     },
     {
-        .name            = "txNonSecurePort2",
+        .name            = "rxNonSecurePort2",
         .type            = PPM_SLAVE_PORT,
         .addrHi          = 0xbLL,
         .mustBeConnected = 0,
@@ -83,7 +83,7 @@ static ppmNetPort netPorts[] = {
         .description     = 0
     },
     {
-        .name            = "interruptRequest",
+        .name            = "newMessageAvailable",
         .type            = PPM_OUTPUT_PORT,
         .mustBeConnected = 0,
         .description     = 0
@@ -139,7 +139,7 @@ ppmModelAttr modelAttrs = {
         .vendor  = "defaultVendor",
         .library = "peripheral",
         .name    = "HelioDynamicBridge",
-        .version = "0.69"
+        .version = "0.1"
     },
 
     .family    = "defaultVendor",

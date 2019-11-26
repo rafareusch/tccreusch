@@ -4,27 +4,27 @@
 
 #define SECURE_MEMORY_REGION ((volatile unsigned char *) (0x01000000))
 
-// @brief: TBD
+// @brief: Answer peripheral interrupt
 void ackInterruptHandler()
 {
     (*(char*) RG_ACK_INTERRUPT) = 0x1;
 }
 
-
-
-// @brief: TBD
-static void receiveMessage(int size)
+// @brief: Receive a message with given size from peripheral
+// and save it to secure memory.
+void receiveMessage(int size)
 {
     int i;
-    char* secureMemoryBuffer = malloc(size);
+    char* nonSecureMemoryBuffer = malloc(size);
     printf("Reading message of %d\n", size);
     printf("####\nRECEIVED WAS:\n");
     for(i = 0; i< size; i++)
     {
-        secureMemoryBuffer[i] = *(RG_READ_DATA);
-        printf("%c",secureMemoryBuffer[i]);
+        nonSecureMemoryBuffer[i] = *(RG_READ_DATA);
+        printf("%c",nonSecureMemoryBuffer[i]);
     }
     
     printf("\n######\n");
-    memcpy(SECURE_MEMORY_REGION,secureMemoryBuffer, size);
+    memcpy(SECURE_MEMORY_REGION,nonSecureMemoryBuffer, size);
+    memset(nonSecureMemoryBuffer,0, size);
 }

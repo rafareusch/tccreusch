@@ -7,9 +7,9 @@
 #include "arm7_support.h"
 #include "rxApi.h"
 
-#define ENTER_SECURE_USING_MONITOR() asm("mov r2, #1\n" "SMC #0\n")
+#define ENTER_SECURE_USING_MONITOR() asm("mov r2, #1\n" "SMC #0\n" )
 
-#define ENTER_NON_SECURE_USING_MONITOR() asm("mov r2, #2\n" "SMC #0\n")
+#define ENTER_NON_SECURE_USING_MONITOR() asm("mov r2, #2\n" "SMC #0\n" "CPS #0x13\n")
 
 #define TZPC_BASE         ((volatile unsigned char *) 0x10001000) 
 
@@ -66,18 +66,13 @@ static void smc_handler(void *ud)
     );
 }
 
-// Supervisor mode entry;
-static void SVC_entry()
-{
-    printf("test\n");
-}
-
+#define HEADER_SIZE 8
 //
 // IRQ handler - called when any sort peripheral signals completion
 //
 static void irq_handler(void *ud)
 {
-    char buffer[8]; // buffer to retrieve header information
+    char buffer[HEADER_SIZE]; // buffer to retrieve header information
     int i; // loop counter
     messageHeader *header; //message header
 
@@ -85,35 +80,34 @@ static void irq_handler(void *ud)
     DISABLE_INTERRUPTS();
     ackInterruptHandler();
 
-    //verifies header, sender and hash
-    // FUTURE
-
     printf("Entering in secure world\n");
     
     ENTER_SECURE_USING_MONITOR();
-
-    ENABLE_BRIDGE_COMMUNICATION();
     
     printf("Entered in secure world\n");
 
-    for(i = 0; i< 8; i++)
-    {
+    for(i = 0; i< HEADER_SIZE; i++)
         buffer[i] = *(RG_READ_HEADER_DATA);
-    }
 
-    memcpy(header,buffer,8);
+    memcpy(header,buffer,HEADER_SIZE);
     
-    receiveMessage(header->messageSize);
+    if(header->sender == 0 || header->sender == 1)
+    {
+        ENABLE_BRIDGE_COMMUNICATION();
+        receiveMessage(header->messageSize);
+        DISABLE_BRIDGE_COMMUNICATION();
+    }
+    else
+    {
+        printf("Invalid Message\n");
+    }
     
-    
-    DISABLE_BRIDGE_COMMUNICATION();
-    
-    setSVCHandler();
     ENTER_NON_SECURE_USING_MONITOR();
     
     printf("Entered in non secure world\nExiting irq exception\n\n############\n\n");
-   
+
     asm(
+    // Enable interrupt
     "MRS     R0, CPSR\n\t"
     "BIC     R0, R0, #0xC0\n\t" 
     "MSR     CPSR, R0\n"
@@ -123,10 +117,11 @@ static void irq_handler(void *ud)
     "CPS     #0x13\n" // Set execution Level
     "LDR PC, =main\n"
     );
+   
 }
 
 
-void SMC_Handler_Main( unsigned int *svc_args )
+void SMC_Handler_Main()
 {
     
     int smc_number = r2;
@@ -135,35 +130,16 @@ void SMC_Handler_Main( unsigned int *svc_args )
     {
     case TO_SECURE:
         printf("Writing 0x0 to ns bit\n");
-        asm(
-            "MRC P15, 0, R1, C1, C1, 0 \n" // Read SCR.
-            "ORR R1, R1, #(1 << 0)\n" // Set SCR.NS (bit 0).
-            "BIC R1, R1, #(1 << 7)\n" // Clear SCR.SCD (bit 7).
-            "MCR P15, 0, R1, C1, C1, 0\n" // Write SCR.
-            // Initialize registers to save values.
-            "MOV R0, #0\n"
-            "MCR P15, 0, R0, C1, C0, 0\n" // SCTLR(NS).
-            "LDR R1, =0x0\n"
-            "MCR P15, 0, R1, C12, C0, 0\n" // VBAR(NS).
-
-            "MSR SPSR_cxsf, #0x13\n" 
-            //"LDR PC, =SVC_entry\n" // SVC_entry points to the first 
-            //"MOVS PC, LR\n" // in the ARM instruction set
-            //"ERET\n"
-        );
-        
-
-        //WR_SCR(0);
+        WR_SCR(0);
         break;
     case TO_UNSECURE:
         printf("Writing 1 to ns bit\n");
         WR_SCR(1);
-    
         break;
     default:
         asm(
             "MSR SPSR_cxsf, #0x13\n"
-            "LDR PC, =run\n" // SVC_entry points to the first 
+            "LDR PC, =main\n" // SVC_entry points to the first 
         );
         break;
     }
@@ -241,8 +217,6 @@ fib(int i)
 
 void fibPrint()
 {    
-    // enter in __ mode
-    asm("CPS #0x12\n");
     int i, j;
     for (j = 0; j < 1; j++) {
 
@@ -257,6 +231,7 @@ void boot()
 {
     printf("Hello World from secure-processor!!!\n");
     
+    asm("CPS #0x13\n");
     // Boot for secure world
     CPU_INIT();
     setupTranslationTable();
@@ -265,9 +240,6 @@ void boot()
     
 
     // Boot for unsecure world
-    //CPU_INIT();
-    //setSVCHandler();
-    
     enterNonSecure();   
     REGISTER_ISR(irq, irq_handler, (void *)NULL);
     ENABLE_INTERRUPTS(); 
@@ -275,13 +247,22 @@ void boot()
 
 void run()
 {
+    asm("CPS #0x13\n"); 
     fibPrint();
     printf("Finished fibonatti\n");
 
     //Test code to verify memory protection
+    printf("Testing access from secure mode\n");
     r2 = TO_SECURE;
     asm("SMC #0\n");
-    printf("First data in secure space %c\n\n",*SECURE_MEMORY_REGION);
+
+    printf("Secure: First data in secure space %c\n\n",*SECURE_MEMORY_REGION);
+
+    
+    printf("Testing access from non-secure mode\n");
+    
+    ENTER_NON_SECURE_USING_MONITOR();
+    printf("Non-Secure: First data in secure space %c\n\n",*(SECURE_MEMORY_REGION + 1));
 }
 
 static int startup_flag = 0;
@@ -293,6 +274,7 @@ int main()
         boot();
     }
     
+    asm("CPS #0x12\n"); 
     run();
 
     return 0;

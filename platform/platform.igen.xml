@@ -153,7 +153,7 @@
         <netportconnection connection="tzpcdecprot0_0"
             name="enable"/>
         <netportconnection connection="fiq_"
-            name="interruptRequest"/>
+            name="newMessageAvailable"/>
         <attribute content="0x1000"
             name="portSize"/>
         <busslaveportconnection connection="pBusRS"
@@ -163,11 +163,11 @@
         <busslaveportconnection connection="pBus"
             hiaddress="0x1100100b"
             loaddress="0x11001000"
-            name="txNonSecurePort"/>
+            name="rxNonSecurePort1"/>
         <busslaveportconnection connection="pBusRNS2"
             hiaddress="0x1100100b"
             loaddress="0x11001000"
-            name="txNonSecurePort2"/>
+            name="rxNonSecurePort2"/>
     </peripheralinstance>
     <fileversion major="1"
         minor="0"
