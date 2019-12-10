@@ -104,16 +104,11 @@ static void irq_handler(void *ud)
     
     ENTER_NON_SECURE_USING_MONITOR();
     
-    printf("Entered in non secure world\nExiting irq exception\n\n############\n\n");
-
     asm(
     // Enable interrupt
     "MRS     R0, CPSR\n\t"
     "BIC     R0, R0, #0xC0\n\t" 
     "MSR     CPSR, R0\n"
-    "LDMFD   SP!, {R8, R12}\n"//    ; Load R8, SPSR
-    "BIC     R12, R12, #0x80 \n"//   ; Set IRQ flag to disable it
-    "MSR     SPSR_cxsf, R12\n"//    ; Set SPSR(Saved Program Status Register)
     "CPS     #0x13\n" // Set execution Level
     "LDR PC, =main\n"
     );

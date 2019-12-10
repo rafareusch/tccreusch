@@ -22,4 +22,8 @@ int main()
     
     requireToSend();
     sendMessage(12,0, "RNS2-Message");
+
+    
+    requireToSend();
+    sendMessage(9,0, "Last test");
 }

@@ -1,0 +1,299 @@
+
+
+CpuManagerMulti (64-Bit) v20170201.0 Open Virtual Platform simulator from www.IMPERAS.com.
+Copyright (c) 2005-2017 Imperas Software Ltd.  Contains Imperas Proprietary Information.
+Licensed Software, All Rights Reserved.
+Visit www.IMPERAS.com for multicore debug, verification and analysis solutions.
+
+CpuManagerMulti started: Thu Dec  5 15:09:15 2019
+
+
+Hello from non-secure processor 2!
+RNS: Requiring write permission
+Info (RNS Tx require ) programControl/hBridge: Locking buffer to RNS2
+Info (RNS TX Register) programControl/hBridge: RNS2 is now transmitting!
+RNS: Ready to send!
+Info (TX Header Write) programControl/hBridge: Write to header data was 1!
+Info (TX Header Write) programControl/hBridge: Write to header data was 4!
+Info (TX Write) programControl/hBridge: End of transmission, generating interrupt to secure processor!
+RNS: Sent a message!
+RNS: Requiring write permission
+Info (RNS Tx require ) programControl/hBridge: RNS2 is not allowed to send
+Hello from non-secure processor 1!
+RNS: Requiring write permission
+Hello World from secure-processor!!!
+Received interrupt. Starting handle
+
+############
+
+Info (Interrupt) programControl/hBridge: Received Interrupt ACK
+Entering in secure world
+NS - Entered in Super Monitor Call Handler!!! Operation is 1
+Writing 0x0 to ns bit
+Entered in secure world
+Info (Secure Register Header) programControl/hBridge:  Header reset
+Info (RX Enable register) programControl/hBridge: RS allowed transmission!
+Reading message of 4
+####
+RECEIVED WAS:
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: No message in buffer, releasing to any port write
+Test
+######
+Info (RX Enable register) programControl/hBridge: RS disabled transmission!
+NS - Entered in Super Monitor Call Handler!!! Operation is 2
+Writing 1 to ns bit
+fib(0) = 0
+fib(1) = 1
+fib(2) = 1
+fib(3) = 2
+fib(4) = 3
+fib(5) = 5
+fib(6) = 8
+fib(7) = 13
+fib(8) = 21
+fib(9) = 34
+fib(10) = 55
+fib(11) = 89
+fib(12) = 144
+fib(13) = 233
+Info (RNS TX Register) programControl/hBridge: RNS2 is now transmitting!
+RNS: Ready to send!
+Info (TX Header Write) programControl/hBridge: Write to header data was 1!
+Info (TX Header Write) programControl/hBridge: Write to header data was 7!
+Info (TX Write) programControl/hBridge: End of transmission, generating interrupt to secure processor!
+RNS: Sent a message!
+Received interrupt. Starting handle
+
+############
+
+Info (Interrupt) programControl/hBridge: Received Interrupt ACK
+Entering in secure world
+NS - Entered in Super Monitor Call Handler!!! Operation is 1
+Writing 0x0 to ns bit
+Entered in secure world
+Info (Secure Register Header) programControl/hBridge:  Header reset
+Info (RX Enable register) programControl/hBridge: RS allowed transmission!
+Reading message of 7
+####
+RECEIVED WAS:
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: No message in buffer, releasing to any port write
+Message
+######
+Info (RX Enable register) programControl/hBridge: RS disabled transmission!
+NS - Entered in Super Monitor Call Handler!!! Operation is 2
+Writing 1 to ns bit
+fib(0) = 0
+fib(1) = 1
+fib(2) = 1
+fib(3) = 2
+fib(4) = 3
+fib(5) = 5
+fib(6) = 8
+fib(7) = 13
+fib(8) = 21
+fib(9) = 34
+fib(10) = 55
+fib(11) = 89
+fib(12) = 144
+fib(13) = 233
+fib(14) = 377
+Info (RNS TX Register) programControl/hBridge: RNS1 is now transmitting!
+RNS: Ready to send!
+Info (TX Header Write) programControl/hBridge: Write to header data was 0!
+Info (TX Header Write) programControl/hBridge: Write to header data was 7!
+Info (TX Write) programControl/hBridge: End of transmission, generating interrupt to secure processor!
+RNS: Sent a message!
+RNS: Requiring write permission
+Received interrupt. Starting handle
+
+############
+
+Info (Interrupt) programControl/hBridge: Received Interrupt ACK
+
+NS - Entered in Super Monitor Call Handler!!! Operation is 1
+Writing 0x0 to ns bit
+Entered in secure world
+Info (Secure Register Header) programControl/hBridge:  Header reset
+Info (RX Enable register) programControl/hBridge: RS allowed transmission!
+Reading message of 7
+####
+RECEIVED WAS:
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: No message in buffer, releasing to any port write
+Example
+######
+Info (RX Enable register) programControl/hBridge: RS disabled transmission!
+NS - Entered in Super Monitor Call Handler!!! Operation is 2
+Writing 1 to ns bit
+fib(0) = 0
+fib(1) = 1
+fib(2) = 1
+fib(3) = 2
+fib(4) = 3
+fib(5) = 5
+fib(6) = 8
+fib(7) = 13
+fib(8) = 21
+fib(9) = 34
+fib(10) = 55
+fib(11) = 89
+fib(12) = 144
+fib(13) = 233
+fib(14) = 377
+Info (RNS TX Register) programControl/hBridge: RNS1 is now transmitting!
+RNS: Ready to send!
+Info (TX Header Write) programControl/hBridge: Write to header data was 0!
+Info (TX Header Write) programControl/hBridge: Write to header data was 12!
+Info (TX Write) programControl/hBridge: End of transmission, generating interrupt to secure processor!
+RNS: Sent a message!
+RNS: Requiring write permission
+Received interrupt. Starting handle
+
+############
+
+Info (Interrupt) programControl/hBridge: Received Interrupt ACK
+
+NS - Entered in Super Monitor Call Handler!!! Operation is 1
+Writing 0x0 to ns bit
+Entered in secure world
+Info (Secure Register Header) programControl/hBridge:  Header reset
+Info (RX Enable register) programControl/hBridge: RS allowed transmission!
+Reading message of 12
+####
+RECEIVED WAS:
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: No message in buffer, releasing to any port write
+RNS2-Message
+######
+Info (RX Enable register) programControl/hBridge: RS disabled transmission!
+NS - Entered in Super Monitor Call Handler!!! Operation is 2
+Writing 1 to ns bit
+fib(0) = 0
+fib(1) = 1
+fib(2) = 1
+fib(3) = 2
+fib(4) = 3
+fib(5) = 5
+fib(6) = 8
+fib(7) = 13
+fib(8) = 21
+fib(9) = 34
+fib(10) = 55
+fib(11) = 89
+fib(12) = 144
+fib(13) = 233
+fib(14) = 377
+Info (RNS TX Register) programControl/hBridge: RNS1 is now transmitting!
+RNS: Ready to send!
+Info (TX Header Write) programControl/hBridge: Write to header data was 0!
+Info (TX Header Write) programControl/hBridge: Write to header data was 9!
+Info (TX Write) programControl/hBridge: End of transmission, generating interrupt to secure processor!
+RNS: Sent a message!
+Received interrupt. Starting handle
+
+############
+
+Info (Interrupt) programControl/hBridge: Received Interrupt ACK
+
+NS - Entered in Super Monitor Call Handler!!! Operation is 1
+Writing 0x0 to ns bit
+Entered in secure world
+Info (Secure Register Header) programControl/hBridge:  Header reset
+Info (RX Enable register) programControl/hBridge: RS allowed transmission!
+Reading message of 9
+####
+RECEIVED WAS:
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: Reading
+Info (Secure buffer data) programControl/hBridge: No message in buffer, releasing to any port write
+Last test
+######
+Info (RX Enable register) programControl/hBridge: RS disabled transmission!
+NS - Entered in Super Monitor Call Handler!!! Operation is 2
+Writing 1 to ns bit
+fib(0) = 0
+fib(1) = 1
+fib(2) = 1
+fib(3) = 2
+fib(4) = 3
+fib(5) = 5
+fib(6) = 8
+fib(7) = 13
+fib(8) = 21
+fib(9) = 34
+fib(10) = 55
+fib(11) = 89
+fib(12) = 144
+fib(13) = 233
+fib(14) = 377
+fib(15) = 610
+fib(16) = 987
+fib(17) = 1597
+fib(18) = 2584
+fib(19) = 4181
+fib(20) = 6765
+fib(21) = 10946
+fib(22) = 17711
+fib(23) = 28657
+fib(24) = 46368
+fib(25) = 75025
+fib(26) = 121393
+fib(27) = 196418
+fib(28) = 317811
+fib(29) = 514229
+fib(30) = 832040
+fib(31) = 1346269
+Finished fibonatti
+Testing access from secure mode
+NS - Entered in Super Monitor Call Handler!!! Operation is 1
+Writing 0x0 to ns bit
+Secure: First data in secure space L
+
+Testing access from non-secure mode
+NS - Entered in Super Monitor Call Handler!!! Operation is 2
+Writing 1 to ns bit
+Processor Exception (PC_PRX) Processor 'programControl/RScpu' 0x8850: e5d33000 ldrb    r3,[r3]
+Processor Exception (PC_RPX) No read access at 0x1000001
+Processor Exception (PC_SED) NOTE: simulated exceptions are not enabled on processor programControl/RScpu. If an application is being simulated that requires simulated exception support (to map memory on demand using an MMU, for example) please ensure simulated exceptions are enabled for correct behavior.
+
+CpuManagerMulti finished: Thu Dec  5 15:09:16 2019
+
+
+CpuManagerMulti (64-Bit) v20170201.0 Open Virtual Platform simulator from www.IMPERAS.com.
+Visit www.IMPERAS.com for multicore debug, verification and analysis solutions.
+
