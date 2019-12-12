@@ -1,5 +1,5 @@
 
-ihwnew -name programControl
+ihwnew -name nonSecToSecValidation
 ihwaddclp -allargs
 
 
@@ -14,7 +14,7 @@ ihwaddprocessor -instancename RScpu -type arm -vendor arm.ovpworld.org -endian l
 
 ihwconnect      -instancename RScpu -busmasterport INSTRUCTION -bus tzBus
 ihwconnect      -instancename RScpu -busmasterport DATA        -bus tzBus
-ihwconnect      -instancename RScpu -netport irq -net fiq_
+ihwconnect      -instancename RScpu -netport irq -net irq_
 
 ihwsetparameter   -handle       RScpu -name variant       -value Cortex-A8   -type enum
 
@@ -101,22 +101,22 @@ ihwconnect   -instancename ramRNS2 -busslaveport sp1 -bus pBusRNS2 \
 
 
 
-# HelioDynamicBridge
-ihwaddperipheral -instancename hBridge -type HelioDynamicBridge -modelfile peripheral/pse
+# NonSecToSec
+ihwaddperipheral -instancename nonSecToSec -type nonSecToSec -modelfile peripheral/pse
 
-ihwconnect       -instancename hBridge -netport enable -net tzpcdecprot0_0
-ihwconnect       -instancename hBridge -netport newMessageAvailable -net fiq_
+ihwconnect       -instancename nonSecToSec -netport enable -net tzpcdecprot0_0
+ihwconnect       -instancename nonSecToSec -netport newMessageAvailable -net irq_
 
-ihwsetparameter    -handle       hBridge -name portSize    -value        0x1000   \
+ihwsetparameter    -handle       nonSecToSec -name portSize    -value        0x1000   \
 -type uns64
 
-ihwconnect      -instancename hBridge -busslaveport readSecurePort -bus pBusRS \
+ihwconnect      -instancename nonSecToSec -busslaveport readSecurePort -bus pBusRS \
                 -loaddress 0x11001000 -hiaddress 0x11001007
 
-ihwconnect      -instancename hBridge -busslaveport rxNonSecurePort1 \
+ihwconnect      -instancename nonSecToSec -busslaveport rxNonSecurePort1 \
                  -bus pBus -loaddress 0x11001000 -hiaddress 0x1100100b
                 
-ihwconnect      -instancename hBridge -busslaveport rxNonSecurePort2 \
+ihwconnect      -instancename nonSecToSec -busslaveport rxNonSecurePort2 \
                  -bus pBusRNS2 -loaddress 0x11001000 -hiaddress 0x1100100b
 
                 

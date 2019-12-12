@@ -1,23 +1,8 @@
-set desc "DynamicBridge - Dynamically enable/disable a bus bridge from the input slave 
-port to the output master port.
-The bridge is enabled when the input net is high, disabled when it is low.
-The size of the port is defined with the portSize parameter.
-The address on the input slave port is defined by the spLoAddress parameter.
-The address on the output master port is defined by the mpLoAddress parameter.
-All three parameters must be specified.
-The input and output ports may be connected to the same bus."
-
-set limitations "The range of the input slave port must not conflict with any exiting port 
-connected to the bus.
-The output bus width is hard coded to be 32 bits." 
-#
-
 imodelnewperipheral  \
-    -name        HelioDynamicBridge \
+    -name        nonSecToSec \
     -library     peripheral \
     -version     0.1 \
     -constructor constructor\
-    -releasestatus ovp        \
     -visibility    visible 
 
 # Output bus size is 32 bits
