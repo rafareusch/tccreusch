@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-#include "transferMsg.h"
 #include "armDefines.h"
 #include "arm7_support.h"
 #include "rxApi.h"
