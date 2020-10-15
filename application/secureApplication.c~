@@ -242,10 +242,6 @@ void boot()
 void run()
 {
     asm("CPS #0x13\n"); 
-
-
-    requireToSend();
-
     fibPrint();
     printf("Finished fibonatti\n");
 

@@ -3,7 +3,7 @@
 #define RG_READ_DATA ((volatile unsigned char *) (0x11001003))
 
 #define RG_REQ ((volatile unsigned char *) (0x11002000))
-#define RG_REQ_ACK ((volatile unsigned char *) (0x11002002))
+#define RG_REQ_ACK ((volatile unsigned char *) (0x11002000))
 
 #define SECURE_MEMORY_REGION ((volatile unsigned char *) (0x01000000))
 

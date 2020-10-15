@@ -35,4 +35,4 @@ build:
 	$(MAKE) -C application          clean	
 	$(MAKE) -C platform    NOVLNV=1
 	$(MAKE) -C application   
-	$(MAKE) -C peripheral/pse   NOVLNV=1       	
+	$(MAKE) -C platform/pse   NOVLNV=1       	

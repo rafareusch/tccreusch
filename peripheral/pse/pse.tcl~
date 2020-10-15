@@ -70,14 +70,14 @@ imodeladdmmregister  -name txReq_RStoRNS \
 imodeladdmmregister  -name txReqAck_RStoRNS \
                      -addressblock writeSecurePort/TxRegs \
                      -readfunction   AckRSRead \
-                     -offset 0x2
+                     -offset 0x1
 		 
 
 
 imodeladdmmregister  -name txData_RStoRNS \
                      -addressblock writeSecurePort/TxRegs \
                      -writefunction  dataRSWrite  \
-		     -offset 0x4  
+		     -offset 0x2  
 
   
 

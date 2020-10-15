@@ -9,7 +9,7 @@ void requireToSend()
 {
     printf("RNS: Requiring write permission\n");
     (*(char*) RG_TX_REQ) = 1;
-    while(*RG_TX_REQ_ACK != 1);
+    while(*RG_TX_REQ_ACK != 4);
     printf("RNS: Ready to send!\n");
 }
 
