@@ -16,6 +16,8 @@ SimAddr mpNSLoAddress;
 SimAddr spSLoAddress;
 
 
+
+
 SimAddr mpSLoAddress;
 SimAddr spNSLoAddress;
 
@@ -29,6 +31,7 @@ enum
     LOCKED,
     TRANSMITTING
 };
+
 
 int rnsRequest[2] = {0};
 
@@ -117,20 +120,32 @@ PPM_REG_READ_CB(ReqRSRead)
     return 1;
 }
 
-
-PPM_REG_WRITE_CB(dataRSWrite) 
-{
-    bhmMessage("I","Request","Received from Secure Processor");
-    //ppmWriteNet(handles.newMessageAvailable, 0);
-}
-
 PPM_REG_READ_CB(AckRSRead) 
 {
     bhmMessage("I","Interrupt","Read");
     return 1;
 }
 
+PPM_REG_WRITE_CB(headerRSWrite) 
+{
+    static int headerRS[2];
+    static int headerOffset = 0;
 
+    bhmMessage("I","Request","Received HEADER from Secure Processor %d", data);
+    headerRS[headerOffset] = data;
+    if (headerOffset == 1){
+        headerOffset = 0;
+    } else {
+        headerOffset++;
+    }
+    //ppmWriteNet(handles.newMessageAvailable, 0);
+}
+
+PPM_REG_WRITE_CB(dataRSWrite) 
+{
+    bhmMessage("I","Request","Received DATA from Secure Processor %c", data);
+    //ppmWriteNet(handles.newMessageAvailable, 0);
+}
 
 
 

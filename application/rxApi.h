@@ -4,19 +4,49 @@
 
 #define RG_REQ ((volatile unsigned char *) (0x11002000))
 #define RG_REQ_ACK ((volatile unsigned char *) (0x11002002))
+#define RG_TX_WRITE_HEADER ((volatile unsigned char *) (0x11002004))
+#define RG_TX_WRITE_DATA  ((volatile unsigned char *) (0x11002006))
+
 
 #define SECURE_MEMORY_REGION ((volatile unsigned char *) (0x01000000))
 
 
-
+//  RS to RNS
 void requireToSend()
 {
     printf("RS: Requiring write permission\n");
     (*(char*) RG_REQ) = 1;
     while(*RG_REQ_ACK != 1);
-     printf("RS: Ready to send!\n");
+    printf("RS: Ready to send!\n");
+    
+
 }
 
+void sendMessage(int size, int sender,char* data)
+{
+    int i = 0;
+    // Write header
+
+
+    *RG_TX_WRITE_HEADER = sender;
+    *RG_TX_WRITE_HEADER = size;
+    
+    for(i = 0; i < size; i++ )
+    {
+       *RG_TX_WRITE_DATA = data[i]; 
+    }
+    printf("RNS: Sent a message!\n");
+}
+
+
+
+
+
+
+
+
+
+// RNS to RS
 
 // @brief: Answer peripheral interrupt
 void ackInterruptHandler()

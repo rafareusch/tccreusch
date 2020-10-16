@@ -245,6 +245,7 @@ void run()
 
 
     requireToSend();
+    sendMessage(9,3, "Renatinha");
 
     fibPrint();
     printf("Finished fibonatti\n");

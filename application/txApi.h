@@ -11,6 +11,7 @@ void requireToSend()
     (*(char*) RG_TX_REQ) = 1;
     while(*RG_TX_REQ_ACK != 1);
     printf("RNS: Ready to send!\n");
+    
 }
 
 // @brief: Send given message filling the header with parameter sender and size.
@@ -18,6 +19,8 @@ void sendMessage(int size, int sender,char* data)
 {
     int i = 0;
     // Write header
+
+
     *RG_TX_WRITE_HEADER = sender;
     *RG_TX_WRITE_HEADER = size;
     

@@ -37,6 +37,7 @@ ihwconnect   -instancename secure2 -busmasterport mp -bus pBusRS  \
              -loaddress 0x00000000 -hiaddress 0xffffffff
 
 
+
 #
 # Bridge - Memory always accessible from non-secure mode
 #
@@ -59,9 +60,9 @@ ihwconnect   -instancename hBNSRS -busmasterport mp -bus pBusRS \
              -loaddress 0x11001000 -hiaddress 0x11001002
 
 ihwconnect   -instancename 1_hBNSRS -busslaveport  sp -bus tzBus \
-             -loaddress 0x10011002000 -hiaddress 0x10011002002
+             -loaddress 0x10011002000 -hiaddress 0x10011002007
 ihwconnect   -instancename 1_hBNSRS -busmasterport mp -bus pBusRS \
-             -loaddress 0x11002000 -hiaddress 0x11002002
+             -loaddress 0x11002000 -hiaddress 0x11002007
 
 
 #

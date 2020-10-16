@@ -72,12 +72,18 @@ imodeladdmmregister  -name txReqAck_RStoRNS \
                      -readfunction   AckRSRead \
                      -offset 0x2
 		 
-
-
-imodeladdmmregister  -name txData_RStoRNS \
+imodeladdmmregister  -name dataTxLocalHeader \
                      -addressblock writeSecurePort/TxRegs \
-                     -writefunction  dataRSWrite  \
-		     -offset 0x4  
+                     -writefunction  headerRSWrite \
+                     -offset 0x4 \
+                     -width 2 \
+                     -access w
+
+imodeladdmmregister  -name dataTxLocal \
+                     -addressblock writeSecurePort/TxRegs \
+                     -writefunction  dataRSWrite \
+                     -offset 0x6 \
+                     -access w
 
   
 
