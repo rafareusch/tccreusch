@@ -245,7 +245,7 @@ void run()
 
 
     requireToSend();
-    char message[30] = "Sending message from RS";
+    char message[30] = "Linda Ninda Shitzu";
     sendMessage(0, message);
 
 

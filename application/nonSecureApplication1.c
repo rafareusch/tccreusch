@@ -15,14 +15,14 @@ int main()
     enterNonSecure();
     printf("Hello from non-secure processor 1!\n");
 
-    requireToSend();
-    sendMessage(0, "Example");
+    // requireToSend();
+    // sendMessage(0, "Example");
 
     
-    requireToSend();
-    sendMessage(0, "RNS2-Message");
+    // requireToSend();
+    // sendMessage(0, "RNS2-Message");
 
     
-    requireToSend();
-    sendMessage(0, "Last test");
+    // requireToSend();
+    // sendMessage(0, "Last test");
 }

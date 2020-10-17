@@ -6,12 +6,13 @@
 #include "pse.macros.igen.h"
 #include <string.h>
 #include <stdbool.h>
-
+#include "rules.h"
 
 #define RNSID1 0
 #define RNSID2 1
 
 #define HEADER_SIZE 8
+
 
 SimAddr mpNSLoAddress;
 SimAddr spSLoAddress;
@@ -118,7 +119,7 @@ PPM_REG_READ_CB(interruptRead)
 
 
 // RS to RNS CALLBACKS
-char bufferRS[20];
+char bufferRS[PACKET_SIZE];
 Bool bufferUsed = False;
 
 PPM_REG_WRITE_CB(ReqRSWrite) 
@@ -146,6 +147,7 @@ PPM_REG_READ_CB(AckRSRead)
 // CALLED WHEN RNS1 READS THE sendToRNS1 SINGAL
 PPM_REG_READ_CB(dataReadyRNS1) 
 {
+
     // DEVE SETAR MODO DE TRANSMISSAO CONTRARIA
     bhmMessage("I","RS to RNS","RNS1 is ready to read message");
     if (bufferUsed == False){
@@ -159,11 +161,12 @@ PPM_REG_READ_CB(dataReadyRNS1)
 PPM_REG_READ_CB(dataReadyRNS2) 
 {
     //DEVE SETAR MODO DE TRANSMISSAO CONTRARIA
-    bhmMessage("I","RS to RNS","RNS2 is ready to read message");
+    
     if (bufferUsed == False){
-        return 1;
+        return 0;
     } else {
-        return 1; // THIS SHOULD BE 0. 1 IS USED FOR TESTING
+        bhmMessage("I","RS to RNS","RNS2 is ready to read message");
+        return 1; 
     }
 } 
 
@@ -208,8 +211,21 @@ PPM_REG_WRITE_CB(dataRSWrite)
 }
 
 
+PPM_REG_READ_CB(txReadHeader) 
+{
+    //DEVE SETAR MODO DE TRANSMISSAO CONTRARIA
+    bhmMessage("I","RS to RNS","Transmitting SIZE to RNS");
+    return RSmsgHeader.messageSize;
+} 
 
-
+PPM_REG_READ_CB(txRead) 
+{
+    //DEVE SETAR MODO DE TRANSMISSAO CONTRARIA
+    static int offset = -1;
+    //bhmMessage("I","RS to RNS","Transmitting DATA to RNS");
+    offset++;
+    return bufferRS[offset];
+} 
 
 
 

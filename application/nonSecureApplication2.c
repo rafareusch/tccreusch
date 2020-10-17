@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "armDefines.h"
 #include "txApi.h"
+#include "../peripheral/pse/rules.h"
 
 // Enter non-secure mode by setting SCR.NS (bit 0)
 void enterNonSecure() 
@@ -17,11 +18,11 @@ int main()
 
     requireToSend();
     sendMessage(1,"Test") ;   
+    char read[PACKET_SIZE];
+    requireToRead(read);
 
-    requireToRead();
-
-    requireToSend();
-    sendMessage(1,"Message") ;  
+    // requireToSend();
+    // sendMessage(1,"Message") ;  
     
     // requireToSend();
     // sendMessage(1,"Message2") ;  

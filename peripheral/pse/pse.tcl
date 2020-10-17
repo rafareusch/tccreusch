@@ -122,15 +122,17 @@ imodeladdmmregister  -name rx_ack \
 imodeladdmmregister  -name dataTxLocalHeader \
                      -addressblock rxNonSecurePort1/rxRegs \
                      -writefunction  txWriteHeader \
+                     -readfunction txReadHeader \
                      -offset 0x2 \
-                     -width 2 \
-                     -access w
+                     -width 2 
+                     
 
 imodeladdmmregister  -name dataTxLocal \
                      -addressblock rxNonSecurePort1/rxRegs \
+                     -readfunction txRead \
                      -writefunction  txWrite \
-                     -offset 0x4 \
-                     -access w
+                     -offset 0x4 
+                     
 
 imodeladdmmregister  -name sendtoRNS1 \
                      -addressblock rxNonSecurePort1/rxRegs \
@@ -165,15 +167,17 @@ imodeladdmmregister  -name rx_ack\
 imodeladdmmregister  -name dataTxLocalHeader \
                      -addressblock rxNonSecurePort2/rxRegs \
                      -writefunction  txWriteHeader \
+                     -readfunction txReadHeader \
                      -offset 0x2 \
-                     -width 2 \
-                     -access w
+                     -width 2 
+                     
 
 imodeladdmmregister  -name dataTxLocal \
                      -addressblock rxNonSecurePort2/rxRegs \
                      -writefunction  txWrite \
-                     -offset 0x4 \
-                     -access w
+                     -readfunction txRead \
+                     -offset 0x4 
+                     
 
 imodeladdmmregister  -name sendtoRNS2 \
                      -addressblock rxNonSecurePort2/rxRegs \
