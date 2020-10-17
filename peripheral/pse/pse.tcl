@@ -104,7 +104,7 @@ imodeladdaddressblock -name rxRegs   \
                        -port rxNonSecurePort1 \
                        -offset 0x0  \
                        -width 8    \
-                       -size 12
+                       -size 16
 
 imodeladdmmregister  -name rx_req \
                      -addressblock rxNonSecurePort1/rxRegs \
@@ -131,6 +131,12 @@ imodeladdmmregister  -name dataTxLocal \
                      -writefunction  txWrite \
                      -offset 0x4 \
                      -access w
+
+imodeladdmmregister  -name sendtoRNS1 \
+                     -addressblock rxNonSecurePort1/rxRegs \
+                     -readfunction  dataReadyRNS1 \
+                     -offset 0x5 
+                     
 
                      
 # Non secure registers - RNS2 #####################################################
@@ -169,11 +175,12 @@ imodeladdmmregister  -name dataTxLocal \
                      -offset 0x4 \
                      -access w
 
-imodeladdmmregister  -name sendtoRNS2\
+imodeladdmmregister  -name sendtoRNS2 \
                      -addressblock rxNonSecurePort2/rxRegs \
-                     -writefunction  txWrite \
-                     -offset 0x5 \
-                  
+                     -readfunction  dataReadyRNS2 \
+                     -offset 0x5 
+                     
+
 
 
 

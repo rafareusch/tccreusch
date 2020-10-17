@@ -2,6 +2,9 @@
 #define RG_TX_REQ_ACK ((volatile unsigned char *) (0x11001001))
 #define RG_TX_WRITE_HEADER ((volatile unsigned char *) (0x11001002))
 #define RG_TX_WRITE_DATA ((volatile unsigned char *) (0x11001004))
+#define RG_RX_DATA_READY ((volatile unsigned char *) (0x11001005))
+
+#include <string.h>
 
 // @brief: Require permission to peripheral to send a message.
 // Blocking method.
@@ -15,18 +18,25 @@ void requireToSend()
 }
 
 // @brief: Send given message filling the header with parameter sender and size.
-void sendMessage(int size, int sender,char* data)
+void sendMessage(int sender,char* data)
 {
     int i = 0;
     // Write header
 
-
     *RG_TX_WRITE_HEADER = sender;
-    *RG_TX_WRITE_HEADER = size;
+    *RG_TX_WRITE_HEADER = strlen(data);
     
-    for(i = 0; i < size; i++ )
+    for(i = 0; i < strlen(data); i++ )
     {
        *RG_TX_WRITE_DATA = data[i]; 
     }
     printf("RNS: Sent a message!\n");
+}
+
+void requireToRead(){
+
+    while(*RG_RX_DATA_READY != 1);
+    printf("RNS: Ready to receive data from PSE");
+
+
 }

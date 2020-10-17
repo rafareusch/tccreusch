@@ -16,11 +16,13 @@ int main()
     printf("Hello from non-secure processor 2!\n");
 
     requireToSend();
-    sendMessage(4,1,"Test") ;   
+    sendMessage(1,"Test") ;   
+
+    requireToRead();
 
     requireToSend();
-    sendMessage(7,1,"Message") ;  
+    sendMessage(1,"Message") ;  
     
     // requireToSend();
-    // sendMessage(8,1,"Message2") ;  
+    // sendMessage(1,"Message2") ;  
 }

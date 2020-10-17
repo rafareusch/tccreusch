@@ -5,6 +5,7 @@
 #define WRITESECUREPORT
 #include "pse.macros.igen.h"
 #include <string.h>
+#include <stdbool.h>
 
 
 #define RNSID1 0
@@ -45,6 +46,17 @@ typedef struct{
 }messageHeader;
 
 messageHeader header;
+
+
+typedef struct{
+
+    int target; // @0 - 4
+
+    int messageSize; // @4 - 8
+
+}RSmessageHeader;
+
+RSmessageHeader RSmsgHeader;
 
 void requireToSend(int rnsRequiring, int data)
 {
@@ -106,11 +118,12 @@ PPM_REG_READ_CB(interruptRead)
 
 
 // RS to RNS CALLBACKS
-
+char bufferRS[20];
+Bool bufferUsed = False;
 
 PPM_REG_WRITE_CB(ReqRSWrite) 
 {
-    bhmMessage("I"," ","Received Request from Secure Processor");
+    bhmMessage("I","RS to RNS","Received Request from Secure Processor");
     //ppmWriteNet(handles.newMessageAvailable, 0);
 }
 
@@ -122,28 +135,75 @@ PPM_REG_READ_CB(ReqRSRead)
 
 PPM_REG_READ_CB(AckRSRead) 
 {
-    bhmMessage("I","Interrupt","Read");
-    return 1;
+    bhmMessage("I","Interrupt","Reading ACK");
+    if (bufferUsed == False){
+        return 1;
+    } else {
+        return 1; // THIS SHOULD BE 0. 1 IS USED FOR TESTING
+    }
 }
+
+// CALLED WHEN RNS1 READS THE sendToRNS1 SINGAL
+PPM_REG_READ_CB(dataReadyRNS1) 
+{
+    // DEVE SETAR MODO DE TRANSMISSAO CONTRARIA
+    bhmMessage("I","RS to RNS","RNS1 is ready to read message");
+    if (bufferUsed == False){
+        return 1;
+    } else {
+        return 1; // THIS SHOULD BE 0. 1 IS USED FOR TESTING
+    }
+} 
+
+// CALLED WHEN RNS1 READS THE sendToRNS2 SINGAL
+PPM_REG_READ_CB(dataReadyRNS2) 
+{
+    //DEVE SETAR MODO DE TRANSMISSAO CONTRARIA
+    bhmMessage("I","RS to RNS","RNS2 is ready to read message");
+    if (bufferUsed == False){
+        return 1;
+    } else {
+        return 1; // THIS SHOULD BE 0. 1 IS USED FOR TESTING
+    }
+} 
 
 PPM_REG_WRITE_CB(headerRSWrite) 
 {
-    static int headerRS[2];
-    static int headerOffset = 0;
+    static int offset = 0;
 
-    bhmMessage("I","Request","Received HEADER from Secure Processor %d", data);
-    headerRS[headerOffset] = data;
-    if (headerOffset == 1){
-        headerOffset = 0;
-    } else {
-        headerOffset++;
+    switch (offset){
+        case 0:
+         RSmsgHeader.target = data;
+         bhmMessage("I","RS to RNS","Received TARGET from Secure Processor %d", data);
+         offset++;
+         break;
+        case 1:
+         RSmsgHeader.messageSize = data;
+         bhmMessage("I","RS to RNS","Received SIZE from Secure Processor %d", data);
+         offset = 0;
     }
-    //ppmWriteNet(handles.newMessageAvailable, 0);
 }
+
+
+
 
 PPM_REG_WRITE_CB(dataRSWrite) 
 {
-    bhmMessage("I","Request","Received DATA from Secure Processor %c", data);
+    static int offset = 0;
+    bhmMessage("I","RS to RNS","Receiving DATA from Secure Processor %c", data);
+    bufferRS[offset] = data;
+    if (offset == RSmsgHeader.messageSize-1){
+        bhmMessage("I","RS to RNS","End of transmission between RS and NonSecToSec");
+        bhmMessage("I","RS to RNS","Notifying RNS%d...",RSmsgHeader.target+1);
+        offset = 0;
+        bufferUsed = true;
+        // int i = 0;
+        // for (i=0 ; i < RSmsgHeader.messageSize ;i++ )
+        // bhmMessage("I","RS to RNS","STORED DATA: %c",bufferRS[i]);
+
+    } else {
+        offset++;
+    }
     //ppmWriteNet(handles.newMessageAvailable, 0);
 }
 

@@ -125,7 +125,7 @@ ihwconnect      -instancename nonSecToSec -busslaveport writeSecurePort -bus pBu
                 -loaddress 0x11002000 -hiaddress 0x11002007
 
 ihwconnect      -instancename nonSecToSec -busslaveport rxNonSecurePort1 \
-                 -bus pBus -loaddress 0x11001000 -hiaddress 0x1100100b
+                 -bus pBus -loaddress 0x11001000 -hiaddress 0x1100100f
                 
 ihwconnect      -instancename nonSecToSec -busslaveport rxNonSecurePort2 \
                  -bus pBusRNS2 -loaddress 0x11001000 -hiaddress 0x1100100f

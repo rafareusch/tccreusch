@@ -9,7 +9,10 @@
 
 
 #define SECURE_MEMORY_REGION ((volatile unsigned char *) (0x01000000))
+#include <string.h>
 
+
+//
 
 //  RS to RNS
 void requireToSend()
@@ -22,16 +25,16 @@ void requireToSend()
 
 }
 
-void sendMessage(int size, int sender,char* data)
+void sendMessage(int target,char* data)
 {
     int i = 0;
     // Write header
 
 
-    *RG_TX_WRITE_HEADER = sender;
-    *RG_TX_WRITE_HEADER = size;
+    *RG_TX_WRITE_HEADER = target;
+    *RG_TX_WRITE_HEADER = strlen(data);
     
-    for(i = 0; i < size; i++ )
+    for(i = 0; i < strlen(data); i++ )
     {
        *RG_TX_WRITE_DATA = data[i]; 
     }
