@@ -245,7 +245,7 @@ void run()
 
 
     requireToSend();
-    char message[30] = "Linda Ninda Shitzu";
+    char message[PACKET_SIZE] = "Linda Ninda Shitzu";
     sendMessage(0, message);
 
 

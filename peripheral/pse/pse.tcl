@@ -118,7 +118,6 @@ imodeladdmmregister  -name rx_ack \
                      -offset 0x1 \
                      -access r
 
-
 imodeladdmmregister  -name dataTxLocalHeader \
                      -addressblock rxNonSecurePort1/rxRegs \
                      -writefunction  txWriteHeader \

@@ -5,7 +5,7 @@
 #define RG_RX_DATA_READY ((volatile unsigned char *) (0x11001005))
 
 #include <string.h>
-
+#include "../peripheral/pse/rules.h"
 // @brief: Require permission to peripheral to send a message.
 // Blocking method.
 void requireToSend()
@@ -21,12 +21,19 @@ void requireToSend()
 void sendMessage(int sender,char* data)
 {
     int i = 0;
-    // Write header
+    int size = 0;
+    
+    if (strlen(data) > PACKET_SIZE){
+        size = PACKET_SIZE;
+        printf("RNS: PACKET_SIZE OVERFLOW. Message Size must be under %d bits\n", PACKET_SIZE);
+    } else {
+        size = strlen(data);
+    }
 
     *RG_TX_WRITE_HEADER = sender;
-    *RG_TX_WRITE_HEADER = strlen(data);
+    *RG_TX_WRITE_HEADER = size;
     
-    for(i = 0; i < strlen(data); i++ )
+    for(i = 0; i < size; i++ )
     {
        *RG_TX_WRITE_DATA = data[i]; 
     }

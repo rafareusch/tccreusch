@@ -10,6 +10,7 @@
 
 #define SECURE_MEMORY_REGION ((volatile unsigned char *) (0x01000000))
 #include <string.h>
+#include "../peripheral/pse/rules.h"
 
 
 //
@@ -28,17 +29,24 @@ void requireToSend()
 void sendMessage(int target,char* data)
 {
     int i = 0;
+    int size = 0;
     // Write header
 
+    if (strlen(data) > PACKET_SIZE){
+        size = PACKET_SIZE;
+        printf("RS: PACKET_SIZE OVERFLOW. Message Size must be under %d bits\n", PACKET_SIZE);
+    } else {
+        size = strlen(data);
+    }
 
     *RG_TX_WRITE_HEADER = target;
-    *RG_TX_WRITE_HEADER = strlen(data);
+    *RG_TX_WRITE_HEADER = size;
     
-    for(i = 0; i < strlen(data); i++ )
+    for(i = 0; i < size; i++ )
     {
        *RG_TX_WRITE_DATA = data[i]; 
     }
-    printf("RNS: Sent a message!\n");
+    printf("RS: Sent a message!\n");
 }
 
 

@@ -363,7 +363,7 @@ PPM_REG_WRITE_CB(txWriteHeader)
         bhmMessage("I","TX Header Write","RNS%d is not transmitting!", rnsWriting +1);
     }
 }
-
+char bufferRNS[PACKET_SIZE];
 //write datare
 PPM_REG_WRITE_CB(txWrite)
 {
@@ -374,13 +374,16 @@ PPM_REG_WRITE_CB(txWrite)
         if(rnsWriteOffset < header.messageSize)
         {
             ((char*)handles.readSecurePort)[READSECUREPORT_REGS_NS_DATA_OFFSET + rnsWriteOffset] = data;
+            bufferRNS[rnsWriteOffset] = data;
             rnsWriteOffset++;
+           
         }
         if(rnsWriteOffset == header.messageSize)
         {
             bhmMessage("I","TX Write","End of transmission, generating interrupt to secure processor!");
             ppmWriteNet(handles.newMessageAvailable, 1);
             rnsWriteOffset = 0;
+             bhmMessage("I","TX Write","%s",bufferRNS);
         }
     }
     else

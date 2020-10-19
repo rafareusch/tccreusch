@@ -18,11 +18,9 @@ int main()
     // requireToSend();
     // sendMessage(0, "Example");
 
-    
     // requireToSend();
     // sendMessage(0, "RNS2-Message");
 
-    
     // requireToSend();
     // sendMessage(0, "Last test");
 }
