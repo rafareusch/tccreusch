@@ -118,9 +118,27 @@ PPM_REG_READ_CB(interruptRead)
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // RS to RNS CALLBACKS
 char bufferRS[PACKET_SIZE];
-Bool bufferUsed = False;
+Bool bufferRSUsed = False;
 
 PPM_REG_WRITE_CB(ReqRSWrite) 
 {
@@ -136,11 +154,12 @@ PPM_REG_READ_CB(ReqRSRead)
 
 PPM_REG_READ_CB(AckRSRead) 
 {
-    bhmMessage("I","Interrupt","Reading ACK");
-    if (bufferUsed == False){
+    //bhmMessage("I","Interrupt","Reading ACK");
+    if (bufferRSUsed == False){
         return 1;
+         bhmMessage("I","RS to RNS","RS is allowed to transmit");
     } else {
-        return 1; // THIS SHOULD BE 0. 1 IS USED FOR TESTING
+        return 0; // THIS SHOULD BE 0. 1 IS USED FOR TESTING
     }
 }
 
@@ -150,10 +169,11 @@ PPM_REG_READ_CB(dataReadyRNS1)
 
     // DEVE SETAR MODO DE TRANSMISSAO CONTRARIA
     bhmMessage("I","RS to RNS","RNS1 is ready to read message");
-    if (bufferUsed == False){
+    if (bufferRSUsed == true && RSmsgHeader.target == 0){
+        bhmMessage("I","RS to RNS","RNS1 is ready to read message");
         return 1;
     } else {
-        return 1; // THIS SHOULD BE 0. 1 IS USED FOR TESTING
+        return 0; 
     }
 } 
 
@@ -162,11 +182,12 @@ PPM_REG_READ_CB(dataReadyRNS2)
 {
     //DEVE SETAR MODO DE TRANSMISSAO CONTRARIA
     
-    if (bufferUsed == False){
-        return 0;
-    } else {
+    if (bufferRSUsed == true && RSmsgHeader.target == 1 ){
         bhmMessage("I","RS to RNS","RNS2 is ready to read message");
-        return 1; 
+        return 1;
+    } else {
+        
+        return 0; 
     }
 } 
 
@@ -197,9 +218,9 @@ PPM_REG_WRITE_CB(dataRSWrite)
     bufferRS[offset] = data;
     if (offset == RSmsgHeader.messageSize-1){
         bhmMessage("I","RS to RNS","End of transmission between RS and NonSecToSec");
-        bhmMessage("I","RS to RNS","Notifying RNS%d...",RSmsgHeader.target+1);
+        bhmMessage("I","RS to RNS","Waiting for RNS%d...",RSmsgHeader.target+1);
         offset = 0;
-        bufferUsed = true;
+        bufferRSUsed = true;
         // int i = 0;
         // for (i=0 ; i < RSmsgHeader.messageSize ;i++ )
         // bhmMessage("I","RS to RNS","STORED DATA: %c",bufferRS[i]);
@@ -224,6 +245,10 @@ PPM_REG_READ_CB(txRead)
     static int offset = -1;
     //bhmMessage("I","RS to RNS","Transmitting DATA to RNS");
     offset++;
+    if (offset == RSmsgHeader.messageSize-1){
+        bufferRSUsed = false;
+        bhmMessage("I","RS to RNS","End of DATA transmission to RNS");
+    }
     return bufferRS[offset];
 } 
 
@@ -397,7 +422,7 @@ PPM_REG_WRITE_CB(txWrite)
 Bool canGivenRNSTransmit(int cpuRNSId)
 {
     Bool ret = False;
-    if(isSomeRNSTransmitingData() == False)
+    if(isSomeRNSTransmitingData() == False && bufferRSUsed == false)
     {
         
         ret = True;

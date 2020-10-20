@@ -21,6 +21,9 @@ int main()
     char read[PACKET_SIZE];
     requireToRead(read);
 
+
+
+
     // requireToSend();
     // sendMessage(1,"Message") ;  
     

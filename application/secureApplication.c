@@ -214,7 +214,7 @@ void fibPrint()
     int i, j;
     for (j = 0; j < 1; j++) {
 
-            for (i = 0; i < 32; i++) {
+            for (i = 0; i < 31; i++) {
                 printf("fib(%d) = %d\n", i, fib(i));
             }
 
@@ -239,19 +239,32 @@ void boot()
     ENABLE_INTERRUPTS(); 
 }
 
+
+void sendProcess(){
+    char message[PACKET_SIZE] = "Message from RS";
+    //enterNonSecure();
+    requireToSend();
+    //DISABLE_INTERRUPTS(); 
+    sendMessage(1, message);
+    //ENABLE_INTERRUPTS();
+
+}
+
 void run()
 {
     asm("CPS #0x13\n"); 
+    printf("RUN FUNCTION STARTING =============== \n");
 
-
-    requireToSend();
-    char message[PACKET_SIZE] = "Linda Ninda Shitzu";
-    sendMessage(0, message);
-
+   
+    sendProcess();
+    printf("RS: End of sendProcess --------------------\n\n");
+    //sendProcess();
 
     fibPrint();
+
     printf("Finished fibonatti\n");
 
+    //while(1);
     //Test code to verify memory protection
     printf("Testing access from secure mode\n");
     r2 = TO_SECURE;
@@ -264,6 +277,7 @@ void run()
     
     ENTER_NON_SECURE_USING_MONITOR();
     printf("Non-Secure: First data in secure space %c\n\n",*(SECURE_MEMORY_REGION + 1));
+   
 }
 
 static int startup_flag = 0;

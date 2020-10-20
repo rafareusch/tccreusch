@@ -22,7 +22,7 @@ void requireToSend()
     (*(char*) RG_REQ) = 1;
     while(*RG_REQ_ACK != 1);
     printf("RS: Ready to send!\n");
-    
+    printf("wtt\n");
 
 }
 
@@ -31,7 +31,7 @@ void sendMessage(int target,char* data)
     int i = 0;
     int size = 0;
     // Write header
-
+   
     if (strlen(data) > PACKET_SIZE){
         size = PACKET_SIZE;
         printf("RS: PACKET_SIZE OVERFLOW. Message Size must be under %d bits\n", PACKET_SIZE);
