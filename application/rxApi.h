@@ -22,8 +22,7 @@ void requireToSend()
     (*(char*) RG_REQ) = 1;
     while(*RG_REQ_ACK != 1);
     printf("RS: Ready to send!\n");
-    printf("wtt\n");
-
+   
 }
 
 void sendMessage(int target,char* data)

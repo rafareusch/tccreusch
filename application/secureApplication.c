@@ -1,10 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <unistd.h>
 #include <string.h>
 #include "armDefines.h"
 #include "arm7_support.h"
 #include "rxApi.h"
+
 
 #define ENTER_SECURE_USING_MONITOR() asm("mov r2, #1\n" "SMC #0\n" )
 
@@ -22,6 +24,8 @@
 
 register r2 asm("r2");
 register r5 asm("r5");
+
+bool messageReceivedRNS1 = false;
 
 enum
 {
@@ -64,13 +68,14 @@ static void smc_handler(void *ud)
     "B SMC_Handler_Main\n"
     );
 }
-
+int enterLock = 0;
 #define HEADER_SIZE 8
 //
 // IRQ handler - called when any sort peripheral signals completion
 //
 static void irq_handler(void *ud)
 {
+
     char buffer[HEADER_SIZE]; // buffer to retrieve header information
     int i; // loop counter
     messageHeader *header; //message header
@@ -89,7 +94,7 @@ static void irq_handler(void *ud)
         buffer[i] = *(RG_READ_HEADER_DATA);
 
     memcpy(header,buffer,HEADER_SIZE);
-    
+    enterLock = 0;
     if(header->sender == 0 || header->sender == 1)
     {
         ENABLE_BRIDGE_COMMUNICATION();
@@ -102,14 +107,16 @@ static void irq_handler(void *ud)
     }
     
     ENTER_NON_SECURE_USING_MONITOR();
-    
+    printf("Ending Interr\n");
+    messageReceivedRNS1 = true;
     asm(
     // Enable interrupt
     "MRS     R0, CPSR\n\t"
     "BIC     R0, R0, #0xC0\n\t" 
     "MSR     CPSR, R0\n"
     "CPS     #0x13\n" // Set execution Level
-    "LDR PC, =main\n"
+    //"MOV     PC, lr\n"
+    "LDR     PC, =main\n"
     );
    
 }
@@ -134,6 +141,7 @@ void SMC_Handler_Main()
         asm(
             "MSR SPSR_cxsf, #0x13\n"
             "LDR PC, =main\n" // SVC_entry points to the first 
+            //"MOV PC, R8"
         );
         break;
     }
@@ -240,47 +248,97 @@ void boot()
 }
 
 
+char messageOut[PACKET_SIZE] = "Message from RS";
+
 void sendProcess(){
-    char message[PACKET_SIZE] = "Message from RS";
+    
+   
     //enterNonSecure();
     requireToSend();
     //DISABLE_INTERRUPTS(); 
-    sendMessage(1, message);
+    sendMessage(1, messageOut);
     //ENABLE_INTERRUPTS();
 
 }
 
-void run()
-{
-    asm("CPS #0x13\n"); 
-    printf("RUN FUNCTION STARTING =============== \n");
+int offset = 0;
+char* readMemoryBuffer = SECURE_MEMORY_REGION;
 
-   
-    sendProcess();
-    printf("RS: End of sendProcess --------------------\n\n");
-    //sendProcess();
+void memoryAcessTest(){
 
-    fibPrint();
-
-    printf("Finished fibonatti\n");
-
-    //while(1);
-    //Test code to verify memory protection
     printf("Testing access from secure mode\n");
     r2 = TO_SECURE;
     asm("SMC #0\n");
 
     printf("Secure: First data in secure space %c\n\n",*SECURE_MEMORY_REGION);
 
+    //memcpy(readMemoryBuffer,SECURE_MEMORY_REGION, PACKET_SIZE);
+
+    for(offset = 0; offset < PACKET_SIZE ; offset++){
+        printf("%c", readMemoryBuffer[offset]);
+    }
+    printf("\n\n");
     
     printf("Testing access from non-secure mode\n");
     
     ENTER_NON_SECURE_USING_MONITOR();
     printf("Non-Secure: First data in secure space %c\n\n",*(SECURE_MEMORY_REGION + 1));
+}
+
+bool cpuProcess = true;
+int commState = 0;
+int counter = 0;
+void run()
+{
+
+    asm("CPS #0x13\n"); 
+    printf("RUN FUNCTION STARTING ================================ \n");
+
+    while(cpuProcess){
    
+    switch(commState){
+
+        case 0: // will wait for message
+            if (messageReceivedRNS1){
+                //readmessage
+                commState++;
+                messageReceivedRNS1 = false;
+            }
+            break;
+        case 1:
+            if (messageReceivedRNS1){
+                //readmessage
+                commState++;
+                messageReceivedRNS1 = false;
+            }
+
+            break;
+        case 2:
+            printf("RS: CPU state 1\n");
+            sendProcess();
+            commState++;
+            break;
+        case 3:
+            cpuProcess = false;
+            printf("RS: Shutdown command\n");
+            break;
+
+
+    }
+    
+    //if(counter == 100){
+    printf(" Doing some calculation... \n");
+    //}
+    
+    
+    }
+    fibPrint();
+    printf("RS: A memory acess test will be now performed\n");
+    memoryAcessTest();
 }
 
 static int startup_flag = 0;
+
 int main() 
 {
     if(startup_flag == 0)
@@ -288,7 +346,6 @@ int main()
         startup_flag = 1;
         boot();
     }
-    
     asm("CPS #0x12\n"); 
     run();
 

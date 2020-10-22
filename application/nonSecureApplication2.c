@@ -16,15 +16,19 @@ int main()
     enterNonSecure();
     printf("Hello from non-secure processor 2!\n");
 
-    requireToSend();
-    sendMessage(1,"1234544899999998") ;   
+    
+    sendMessage(1,"First Message");   
+    
+    sendMessage(1,"Second Message");
+    
     char read[PACKET_SIZE];
     requireToRead(read);
+    
+    sendMessage(1,"Third Message");
 
 
 
-
-    // requireToSend();
+     //requireToSend();
     // sendMessage(1,"Message") ;  
     
     // requireToSend();
