@@ -19,7 +19,7 @@ int main()
     
     sendMessage(1,"First Message");   
     
-    sendMessage(1,"Second Message");
+    sendMessage(1,"RNS Message   ");
     
     char read[PACKET_SIZE];
     requireToRead(read);

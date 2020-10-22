@@ -248,7 +248,7 @@ void boot()
 }
 
 
-char messageOut[PACKET_SIZE] = "Message from RS";
+char messageOut[PACKET_SIZE];
 
 void sendProcess(){
     
@@ -285,9 +285,27 @@ void memoryAcessTest(){
     printf("Non-Secure: First data in secure space %c\n\n",*(SECURE_MEMORY_REGION + 1));
 }
 
+char* readSecureMemory(int dataOffset){
+
+    r2 = TO_SECURE;
+    asm("SMC #0\n");
+    printf("MEMORY:");
+    for(offset = 0; offset < PACKET_SIZE ; offset++){
+        printf("%c.", readMemoryBuffer[offset]);
+    }
+    printf("\n\n");
+
+    r2 = TO_UNSECURE;
+    asm("SMC #0\n");
+    return readMemoryBuffer;
+
+}
+
 bool cpuProcess = true;
 int commState = 0;
 int counter = 0;
+int i = 0;
+char *data;
 void run()
 {
 
@@ -307,7 +325,10 @@ void run()
             break;
         case 1:
             if (messageReceivedRNS1){
-                //readmessage
+                data = readSecureMemory(0);
+                for (i=0;i<PACKET_SIZE;i++){
+                    messageOut[i] = data[i];
+                }
                 commState++;
                 messageReceivedRNS1 = false;
             }
