@@ -19,12 +19,13 @@ int main()
     
     sendMessage(1,"First Message");   
     
-    sendMessage(1,"RNS Message   ");
+    //sendMessage(1,"RNS Message   ");
     
     char read[PACKET_SIZE];
     requireToRead(read);
     
     sendMessage(1,"Third Message");
+   //sendMessage(1,"Q Message");
 
 
 

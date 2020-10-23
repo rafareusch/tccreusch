@@ -15,9 +15,10 @@ int main()
     enterNonSecure();
     printf("Hello from non-secure processor 1!\n");
 
-    // requireToSend();
-    // sendMessage(0, "Example");
-
+     //requireToSend();
+     sendMessage(0, "RNS1 message");
+     char read[PACKET_SIZE];
+     requireToRead(read);
     // requireToSend();
     // sendMessage(0, "RNS2-Message");
 

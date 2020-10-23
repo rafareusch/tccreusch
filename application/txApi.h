@@ -48,14 +48,12 @@ void requireToRead(char * data){
     int i;
     int msgSize = *RG_TX_WRITE_HEADER;
     printf("RNS: PSE indicates size is %d\n",msgSize);
-    for (i = 0; i < msgSize ; i++)
-         data[i] = *RG_TX_WRITE_DATA;
-
-    printf("RNS: Data received: |");
     for (i = 0; i < msgSize ; i++){
-        printf("%c", data[i]);
+         data[i] = *RG_TX_WRITE_DATA;
+         printf("Received %c|\n",data[i]);
     }
-    printf("|\n");
+
+    printf("RNS: Data received: |%s|\n",data);
 
 
 

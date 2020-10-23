@@ -168,11 +168,11 @@ PPM_REG_READ_CB(dataReadyRNS1)
 {
 
     // DEVE SETAR MODO DE TRANSMISSAO CONTRARIA
-    bhmMessage("I","RS to RNS","RNS1 is ready to read message");
-    if (bufferRSUsed == true && RSmsgHeader.target == 0){
+    if (bufferRSUsed == true && RSmsgHeader.target == 0 ){
         bhmMessage("I","RS to RNS","RNS1 is ready to read message");
         return 1;
     } else {
+        
         return 0; 
     }
 } 
@@ -245,11 +245,15 @@ PPM_REG_READ_CB(txRead)
     static int offset = -1;
     //bhmMessage("I","RS to RNS","Transmitting DATA to RNS");
     offset++;
+    char returnValue = bufferRS[offset];
+
     if (offset == RSmsgHeader.messageSize-1){
         bufferRSUsed = false;
         bhmMessage("I","RS to RNS","End of DATA transmission to RNS");
+        offset = -1;
+        
     }
-    return bufferRS[offset];
+    return returnValue;
 } 
 
 
