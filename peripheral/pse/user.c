@@ -210,11 +210,10 @@ PPM_REG_WRITE_CB(headerRSWrite)
 
 
 
-
 PPM_REG_WRITE_CB(dataRSWrite) 
 {
     static int offset = 0;
-    bhmMessage("I","RS to RNS","Receiving DATA from Secure Processor %c", data);
+    //bhmMessage("I","RS to RNS","Receiving DATA from Secure Processor %c", data);
     bufferRS[offset] = data;
     if (offset == RSmsgHeader.messageSize-1){
         bhmMessage("I","RS to RNS","End of transmission between RS and NonSecToSec");

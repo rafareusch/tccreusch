@@ -24,7 +24,8 @@ int main()
     char read[PACKET_SIZE];
     requireToRead(read);
     
-    sendMessage(1,"Third Message");
+    sendMessage(1,"Second Message");
+    //sendMessage(1,"Third Message");
    //sendMessage(1,"Q Message");
 
 

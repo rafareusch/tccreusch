@@ -119,15 +119,15 @@ ihwsetparameter    -handle       nonSecToSec -name portSize    -value        0x1
 -type uns64
 
 ihwconnect      -instancename nonSecToSec -busslaveport readSecurePort -bus pBusRS \
-                -loaddress 0x11001000 -hiaddress 0x11001007
+                -loaddress 0x11001000 -hiaddress 0x1100107F
 
 ihwconnect      -instancename nonSecToSec -busslaveport writeSecurePort -bus pBusRS \
-                -loaddress 0x11002000 -hiaddress 0x11002007
+                -loaddress 0x11002000 -hiaddress 0x1100207F
 
 ihwconnect      -instancename nonSecToSec -busslaveport rxNonSecurePort1 \
-                 -bus pBus -loaddress 0x11001000 -hiaddress 0x1100100f
+                 -bus pBus -loaddress 0x11001000 -hiaddress 0x1100107f
                 
 ihwconnect      -instancename nonSecToSec -busslaveport rxNonSecurePort2 \
-                 -bus pBusRNS2 -loaddress 0x11001000 -hiaddress 0x1100100f
+                 -bus pBusRNS2 -loaddress 0x11001000 -hiaddress 0x1100107f
 
                 

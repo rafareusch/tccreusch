@@ -70,16 +70,16 @@ static void smc_handler(void *ud)
 }
 
 // IRQ handler - called when any sort peripheral signals completion
-//
+
 static void irq_handler(void *ud)
 {
     //   https://stackoverflow.com/questions/32865407/arm-interrupts-and-context-saving
-    asm(
+    //asm(
        // "MRS R0, CPSR \n" 
        // "STMFD   sp!, {R0-R12, lr}  \n" 
 
-        "STMFD   r13!, {r0-r12,r14} \n"
-      );
+        //"STMFD   r13!, {r0-r12,r14} \n"
+    //  );
 
     int i , buffer[HEADER_SIZE]; // loop counter
     messageHeader header; //message header
@@ -95,7 +95,7 @@ static void irq_handler(void *ud)
 
     for(i = 0; i< HEADER_SIZE; i++)
         { buffer[i] = *(RG_READ_HEADER_DATA);
-          printf(" %d ", buffer[i]);
+          /////rintf(" %d ", buffer[i]);
         }
 
     header.sender =  buffer[0];        // transmissor
@@ -103,7 +103,7 @@ static void irq_handler(void *ud)
 
      enterLock = 0;
 
-    printf("           size %d   %d ", HEADER_SIZE,header.messageSize);
+    //printf("           size %d   %d ", HEADER_SIZE,header.messageSize);
 
     if(header.sender == 0 || header.sender == 1)
     {
@@ -117,7 +117,7 @@ static void irq_handler(void *ud)
     }
     
     //ENTER_NON_SECURE_USING_MONITOR();
-    enterNonSecure();   
+    //enterNonSecure();   
 
 
     messageReceivedRNS1 = true;
@@ -134,11 +134,68 @@ static void irq_handler(void *ud)
 
   // "MOV     PC, R0\n"
 
-    "LDMFD   r13!, {r0-r12,r14} \n"
+    // "MRS     R0, CPSR\n\t"
+    // "BIC     R0, R0, #0xC0\n\t" 
+    // "MSR     CPSR, R0\n"
+    // "CPS     #0x13\n" // Set execution Level
+
+    //"LDMFD   r13!, {r0-r12,r14} \n"
      "LDR     PC, =run\n"
+
     );
    
 }
+
+
+
+
+// // HELIO IRQ HANDLER
+// static void irq_handler(void *ud)
+// {
+//     char buffer[HEADER_SIZE]; // buffer to retrieve header information
+//     int i; // loop counter
+//     messageHeader *header; //message header
+
+//     printf("Received interrupt. Starting handle\n\n############\n\n");
+//     DISABLE_INTERRUPTS();
+//     ackInterruptHandler();
+
+//     printf("Entering in secure world\n");
+    
+//     ENTER_SECURE_USING_MONITOR();
+    
+//     printf("Entered in secure world\n");
+
+//     for(i = 0; i< HEADER_SIZE; i++)
+//         buffer[i] = *(RG_READ_HEADER_DATA);
+
+//     memcpy(header,buffer,HEADER_SIZE);
+    
+//     if(header->sender == 0 || header->sender == 1)
+//     {
+//         ENABLE_BRIDGE_COMMUNICATION();
+//         receiveMessage(header->messageSize);
+//         DISABLE_BRIDGE_COMMUNICATION();
+//     }
+//     else
+//     {
+//         printf("Invalid Message\n");
+//     }
+//      messageReceivedRNS1 = true;
+//     received=1;
+//     ENTER_NON_SECURE_USING_MONITOR();
+    
+//     asm(
+//     // Enable interrupt
+//     "MRS     R0, CPSR\n\t"
+//     "BIC     R0, R0, #0xC0\n\t" 
+//     "MSR     CPSR, R0\n"
+//     "CPS     #0x13\n" // Set execution Level
+//     "LDR PC, =run\n"
+//     );
+   
+// }
+
 
 
 void SMC_Handler_Main()
@@ -159,8 +216,8 @@ void SMC_Handler_Main()
     default:
         asm(
             "MSR SPSR_cxsf, #0x13\n"
-            "LDR PC, =main\n" // SVC_entry points to the first 
-            //"MOV PC, R8"
+            //"LDR PC, =main\n" // SVC_entry points to the first 
+            "MOV PC, lr"
         );
         break;
     }
@@ -233,7 +290,7 @@ void setSVCHandler()
 
 void sendProcess(int target){
 
-    char messageOut[PACKET_SIZE] = "Message from RS";
+    char messageOut[PACKET_SIZE] = "Message from Secure Processor";
 
     //DISABLE_INTERRUPTS();
     requireToSend();
@@ -266,18 +323,22 @@ void sendProcess(int target){
 void memoryAcessTest(){
 
    int offset = 0;
+   printf("--------------------------> Memory acess test \n");
 
-   DISABLE_INTERRUPTS();
+   //DISABLE_INTERRUPTS();
+  // asm("CPS #0x13\n");
    //ENTER_SECURE_USING_MONITOR();  // ESSA LINHA ESTÁ CAUSANDO DEADLOCK CASO O PROCESSADORE SEJA INTERROMPIDO DEPOIS.
 
-   printf("---------------------> Testing access from secure mode, secure data: \n");
+  
+   printf("data: |");
+   for(offset = 0; offset < PACKET_SIZE ; offset++)
+       printf("%c", *(SECURE_MEMORY_REGION + offset));
 
-//    for(offset = 0; offset < PACKET_SIZE ; offset++)
-//        printf("%c ", *(SECURE_MEMORY_REGION + offset));
-//    printf("\n\n");
+   printf("\n|\n----------------------> End\n");
        
+   //ENTER_NON_SECURE_USING_MONITOR();
    //enterNonSecure();
-   ENABLE_INTERRUPTS();
+   //ENABLE_INTERRUPTS();
 }
 
 
@@ -310,7 +371,7 @@ void run()
     while(cpuProcess){
 
        fibPrint();
-       printf("RegSsec: A memory acess test will be now performed after recetion\n");
+       
 
        // testa se algo chegou
        if(received) {
@@ -319,13 +380,23 @@ void run()
            received=0;
            receivedCount++;
            if (receivedCount == 2){
-               cpuProcess = false;
+              
                sendProcess(0);
+              
+           }  
+           if (receivedCount == 3){
+               cpuProcess = false;
                printf("Shutdown command \n");
            }  
          }
    }
-     fibPrint(); // Está aqui para impedir que o processador desligue logo após enviar a mensagem.
+
+     //fibPrint();
+     //fibPrint();
+     printf("\n\n\n-----------> An Exception will be generated to shutdown the processor.\n");
+    printf("%c ", *(SECURE_MEMORY_REGION + 0xffffffffffffff)); 
+       
+        // Está aqui para impedir que o processador desligue logo após enviar a mensagem.
                  // Pode ser retirado caso necessario.
 }
 

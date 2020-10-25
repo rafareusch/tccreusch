@@ -19,6 +19,8 @@ int main()
      sendMessage(0, "RNS1 message");
      char read[PACKET_SIZE];
      requireToRead(read);
+
+     sendMessage(0, "RNS1 second message");
     // requireToSend();
     // sendMessage(0, "RNS2-Message");
 

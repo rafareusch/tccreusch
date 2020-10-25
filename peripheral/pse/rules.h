@@ -1,2 +1,2 @@
-#define PACKET_SIZE 20 //bits
+#define PACKET_SIZE 64 //bits
 

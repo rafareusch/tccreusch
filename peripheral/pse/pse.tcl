@@ -28,8 +28,8 @@ imodeladdbusslaveport -name readSecurePort \
 imodeladdaddressblock -name regs   \
                        -port readSecurePort \
                        -offset 0x0  \
-                       -width 16    \
-                       -size 8
+                       -width 8    \
+                       -size 128
 
 imodeladdmmregister  -name ns_interrupt_ack \
                      -addressblock readSecurePort/regs \
@@ -58,8 +58,8 @@ imodeladdbusslaveport -name writeSecurePort \
 imodeladdaddressblock -name TxRegs   \
                        -port writeSecurePort \
                        -offset 0x0  \
-                       -width 16    \
-                       -size 8
+                       -width 8    \
+                       -size 128
 
 
 imodeladdmmregister  -name txReq_RStoRNS \
@@ -104,7 +104,7 @@ imodeladdaddressblock -name rxRegs   \
                        -port rxNonSecurePort1 \
                        -offset 0x0  \
                        -width 8    \
-                       -size 16
+                       -size 128
 
 imodeladdmmregister  -name rx_req \
                      -addressblock rxNonSecurePort1/rxRegs \
@@ -148,7 +148,7 @@ imodeladdaddressblock -name rxRegs   \
                        -port rxNonSecurePort2 \
                        -offset 0x0  \
                        -width 8    \
-                       -size 16
+                       -size 128
 
 imodeladdmmregister  -name rx_req \
                      -addressblock rxNonSecurePort2/rxRegs \
