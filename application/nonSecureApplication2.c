@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include "armDefines.h"
 #include "txApi.h"
-#include "../peripheral/pse/rules.h"
 
 // Enter non-secure mode by setting SCR.NS (bit 0)
 void enterNonSecure() 
@@ -13,27 +12,26 @@ void enterNonSecure()
 
 int main() 
 {
+    int fim, i=0;
+    char wd[100];
+
     enterNonSecure();
     printf("Hello from non-secure processor 2!\n");
 
-    
-    sendMessage(1,"First Message");   
-    
-    //sendMessage(1,"RNS Message   ");
-    
-    char read[PACKET_SIZE];
-    requireToRead(read);
-    
-    sendMessage(1,"Second Message");
-    //sendMessage(1,"Third Message");
-   //sendMessage(1,"Q Message");
+    // infite loop reacting to the secure processor
+    for(;;) {
+        requireToRead(wd);
+        printf("\n\n###################Received: [%s] ", wd);
 
+        if (wd[0]=='1')  fim=1;  else fim=0;
 
+        sprintf(wd,"{from NONSEC[2] to SEC - packet %d}", i++);
+        printf(" ### Sending [%s] \n", wd);
+        sendMessage(1, wd);
 
-     //requireToSend();
-    // sendMessage(1,"Message") ;  
-    
-    // requireToSend();
-    // sendMessage(1,"Message2") ;
+        if(fim) break;
+     }
 
+     puts("#### NONSEC 2 ENDED");
+     return(0);
 }

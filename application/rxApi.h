@@ -45,6 +45,8 @@ void sendMessage(int target,char* data)
     {
        *RG_TX_WRITE_DATA = data[i]; 
     }
+
+
     printf("RS: Sent a message!\n");
 }
 

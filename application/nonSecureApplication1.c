@@ -12,18 +12,26 @@ void enterNonSecure()
 
 int main() 
 {
+    int fim, i=0;
+    char wd[100];
+
     enterNonSecure();
     printf("Hello from non-secure processor 1!\n");
 
-     //requireToSend();
-     sendMessage(0, "RNS1 message");
-     char read[PACKET_SIZE];
-     requireToRead(read);
+    // infite loop reacting to the secure processor
+    for(;;) {
+        requireToRead(wd);
+        printf("\n\n###################Received: [%s] ", wd);
 
-     sendMessage(0, "RNS1 second message");
-    // requireToSend();
-    // sendMessage(0, "RNS2-Message");
+        if (wd[0]=='1')  fim=1;  else fim=0;
 
-    // requireToSend();
-    // sendMessage(0, "Last test");
+        sprintf(wd,"{from NONSEC[1] to SEC - packet %d}", i++);
+        printf(" ### Sending [%s] \n", wd);
+        sendMessage(0, wd);
+
+        if(fim) break;
+     }
+
+     puts("#### NONSEC 1 ENDED");
+     return(0);
 }

@@ -25,10 +25,11 @@
 register r2 asm("r2");
 
 
-bool messageReceivedRNS1 = false;
-int received=0;
-int enterLock = 0;
+#define  NB_ITERATIONS 24
 
+int received=0;
+int iteration=0;
+int previous=0;
 
 // Define a struct that stores each flit and the time that it arrive in the router
 typedef struct{
@@ -70,40 +71,33 @@ static void smc_handler(void *ud)
 }
 
 // IRQ handler - called when any sort peripheral signals completion
-
 static void irq_handler(void *ud)
 {
-    //   https://stackoverflow.com/questions/32865407/arm-interrupts-and-context-saving
-    //asm(
-       // "MRS R0, CPSR \n" 
-       // "STMFD   sp!, {R0-R12, lr}  \n" 
 
-        //"STMFD   r13!, {r0-r12,r14} \n"
-    //  );
+    // Saving processor state  
+    asm(
+         "MRS R0, SPSR \n" 
+         "STMFD   sp!, {R0-R12, LR}  \n"     // não ajudou em nada
+       );
 
     int i , buffer[HEADER_SIZE]; // loop counter
     messageHeader header; //message header
 
 
-    printf("--------------------------------->  Received interrupt. Starting handle\n");
+    printf("------------------------------------------------------------------------------------->  Received interrupt. Starting handle\n");
     DISABLE_INTERRUPTS();
     ackInterruptHandler();
     
     ENTER_SECURE_USING_MONITOR();
-    
-    printf("---------------------------------->  Entered in secure world\n");
+    printf("------------------------------------------------------------------------------------->  INTERRUPT Entered in secure world\n");
 
     for(i = 0; i< HEADER_SIZE; i++)
         { buffer[i] = *(RG_READ_HEADER_DATA);
-          /////rintf(" %d ", buffer[i]);
+          printf(" . %d ", buffer[i]);
         }
 
     header.sender =  buffer[0];        // transmissor
     header.messageSize =  buffer[4];  
-
-     enterLock = 0;
-
-    //printf("           size %d   %d ", HEADER_SIZE,header.messageSize);
 
     if(header.sender == 0 || header.sender == 1)
     {
@@ -116,85 +110,24 @@ static void irq_handler(void *ud)
         printf("Invalid Message\n");
     }
     
-    //ENTER_NON_SECURE_USING_MONITOR();
-    //enterNonSecure();   
+    ENTER_NON_SECURE_USING_MONITOR();
+    printf("------------------------------------------------------------------------------------->  INTERRUPT Leaving in secure world\n");
+   
 
-
-    messageReceivedRNS1 = true;
-
-    received=1;
+    received =  buffer[4];    /// received recebe o tamanho da MSG
 
     ENABLE_INTERRUPTS(); 
 
-    printf("---------------------------------->  Ending Interruption \n");
+    printf("------------------------------------------------------------------------------------->  Ending Interruption \n\n\n\n\n");
 
+    // restore context
     asm(
-     
-  // "LDMFD   sp!, {R0-R12, pc} \n"
-
-  // "MOV     PC, R0\n"
-
-    // "MRS     R0, CPSR\n\t"
-    // "BIC     R0, R0, #0xC0\n\t" 
-    // "MSR     CPSR, R0\n"
-    // "CPS     #0x13\n" // Set execution Level
-
-    //"LDMFD   r13!, {r0-r12,r14} \n"
-     "LDR     PC, =run\n"
-
+          "LDMFD   sp!, {R0-R12, LR}  \n"     // não ajudou em nada
+          "MSR    SPSR, R0  \n"  
+          "LDR     PC, =run\n\t"
     );
    
 }
-
-
-
-
-// // HELIO IRQ HANDLER
-// static void irq_handler(void *ud)
-// {
-//     char buffer[HEADER_SIZE]; // buffer to retrieve header information
-//     int i; // loop counter
-//     messageHeader *header; //message header
-
-//     printf("Received interrupt. Starting handle\n\n############\n\n");
-//     DISABLE_INTERRUPTS();
-//     ackInterruptHandler();
-
-//     printf("Entering in secure world\n");
-    
-//     ENTER_SECURE_USING_MONITOR();
-    
-//     printf("Entered in secure world\n");
-
-//     for(i = 0; i< HEADER_SIZE; i++)
-//         buffer[i] = *(RG_READ_HEADER_DATA);
-
-//     memcpy(header,buffer,HEADER_SIZE);
-    
-//     if(header->sender == 0 || header->sender == 1)
-//     {
-//         ENABLE_BRIDGE_COMMUNICATION();
-//         receiveMessage(header->messageSize);
-//         DISABLE_BRIDGE_COMMUNICATION();
-//     }
-//     else
-//     {
-//         printf("Invalid Message\n");
-//     }
-//      messageReceivedRNS1 = true;
-//     received=1;
-//     ENTER_NON_SECURE_USING_MONITOR();
-    
-//     asm(
-//     // Enable interrupt
-//     "MRS     R0, CPSR\n\t"
-//     "BIC     R0, R0, #0xC0\n\t" 
-//     "MSR     CPSR, R0\n"
-//     "CPS     #0x13\n" // Set execution Level
-//     "LDR PC, =run\n"
-//     );
-   
-// }
 
 
 
@@ -202,11 +135,13 @@ void SMC_Handler_Main()
 {
     
     int smc_number = r2;
+
     printf("NS - Entered in Super Monitor Call Handler!!! Operation is %d\n", smc_number);
+
     switch (smc_number)
     {
     case TO_SECURE:
-        printf("Writing 0x0 to ns bit\n");
+        printf("Writing 0x0 to ns bit  \n");
         WR_SCR(0);
         break;
     case TO_UNSECURE:
@@ -214,13 +149,14 @@ void SMC_Handler_Main()
         WR_SCR(1);
         break;
     default:
-        asm(
-            "MSR SPSR_cxsf, #0x13\n"
-            //"LDR PC, =main\n" // SVC_entry points to the first 
-            "MOV PC, lr"
-        );
+     asm(
+         "MSR SPSR_cxsf, #0x13\n"
+         "LDR PC, =main\n" // volta para o main 
+         "MOV PC, lr"
+     );
         break;
     }
+
 }
 
 /// ############# Config methods #############
@@ -288,116 +224,73 @@ void setSVCHandler()
 
 
 
-void sendProcess(int target){
+void sendProcess(int target, int command){
 
-    char messageOut[PACKET_SIZE] = "Message from Secure Processor";
+    char messageOut[100];
 
-    //DISABLE_INTERRUPTS();
+    sprintf(messageOut,"%d Message from Secure Processor", command);
+
     requireToSend();
     sendMessage(target, messageOut);
-    //ENABLE_INTERRUPTS();
 
 }
 
 
-
-/////char* readSecureMemory(int dataOffset){
-/////
-/////    int offset;
-/////    
-/////    r2 = TO_SECURE;
-/////    asm("SMC #0\n");
-/////    printf("MEMORY:");
-/////    for(offset = 0; offset < PACKET_SIZE ; offset++){
-/////        printf("%c.", readMemoryBuffer[offset]);
-/////    }
-/////    printf("\n\n");
-/////
-/////    r2 = TO_UNSECURE;
-/////    asm("SMC #0\n");
-/////    return readMemoryBuffer;
-/////
-/////}
 
 //////////  le os dados da região segura ////////////////////////////// 
-void memoryAcessTest(){
+void memoryAcessTest(int size){
 
    int offset = 0;
-   printf("--------------------------> Memory acess test \n");
-
-   //DISABLE_INTERRUPTS();
-  // asm("CPS #0x13\n");
-   //ENTER_SECURE_USING_MONITOR();  // ESSA LINHA ESTÁ CAUSANDO DEADLOCK CASO O PROCESSADORE SEJA INTERROMPIDO DEPOIS.
-
   
-   printf("data: |");
-   for(offset = 0; offset < PACKET_SIZE ; offset++)
+
+   ENTER_SECURE_USING_MONITOR();
+   printf("------------------------------------------------------------------------------------->  memoryAcessTest Entered in secure world\n");
+ 
+   printf("------Memory acess test--------------#########>> ||");
+   for(offset = 0; offset < size ; offset++)
        printf("%c", *(SECURE_MEMORY_REGION + offset));
 
-   printf("\n|\n----------------------> End\n");
-       
-   //ENTER_NON_SECURE_USING_MONITOR();
-   //enterNonSecure();
-   //ENABLE_INTERRUPTS();
+   printf("||\n\n");
+      
+   ENTER_NON_SECURE_USING_MONITOR();
+   printf("---------------------------------->  memoryAcessTest Leaving in secure world\n\n\n\n");
+  
 }
 
 
-//////////  fibonacci de 0 a 19  ////////////////////////////// 
-static int fib(int i)
-{
-    return (i > 1) ? fib(i - 1) + fib(i - 2) : i;
-}
-
-void fibPrint()
-{    
-    int i, j;
-    for (j = 0; j < 1; j++) {
-
-            for (i = 0; i < 20; i++) {
-                printf("fib(%d) = %d\n", i, fib(i));
-            }
-
-        }
-}
-
-bool cpuProcess = true;
-int receivedCount = 0;
-
-////////// executa qq coisa - um fibonacci de 0 a 19 ////////// 
+////////// espera chegar, e envia ////////// 
 void run() 
 {  
-    asm("CPS #0x13\n");  // no secure
+    for(   ; iteration < NB_ITERATIONS ; )  {
 
-    while(cpuProcess){
+          // envia pacote para um processador não seguro - o !received evita dois envios!
+          if(!received)
+             {  int cmd;
 
-       fibPrint();
-       
+                // avisa os dois periféricos que é última iteração
+                if( iteration >= NB_ITERATIONS-2 )  cmd=1;  else cmd=0;
 
-       // testa se algo chegou
-       if(received) {
-           memoryAcessTest();
-           if (receivedCount == 0) sendProcess(1);
-           received=0;
-           receivedCount++;
-           if (receivedCount == 2){
-              
-               sendProcess(0);
-              
-           }  
-           if (receivedCount == 3){
-               cpuProcess = false;
-               printf("Shutdown command \n");
-           }  
-         }
-   }
+                if  (!previous)
+                     { sendProcess( 0, cmd );  previous=1;}
+                else
+                     { sendProcess( 1, cmd );  previous=0;}
+             }
+          
+           while( received==0 );  // espera resposta da interrupção
 
-     //fibPrint();
-     //fibPrint();
-     printf("\n\n\n-----------> An Exception will be generated to shutdown the processor.\n");
-    printf("%c ", *(SECURE_MEMORY_REGION + 0xffffffffffffff)); 
-       
-        // Está aqui para impedir que o processador desligue logo após enviar a mensagem.
-                 // Pode ser retirado caso necessario.
+           printf("--------------------------------#########>> Data from NONSEC %d \n\n", iteration);
+
+           DISABLE_INTERRUPTS();
+           memoryAcessTest(received);
+           ENABLE_INTERRUPTS();
+
+           received = 0;
+           ++iteration;
+    }
+
+   puts("###### R U N      E N D E D");
+
+   enterNonSecure();   // non secure
 }
 
 
@@ -407,10 +300,7 @@ int main()
 { 
     received = 0;     
 
-     printf("---------------------> Hello World from secure-processor!!!\n");
-        REGISTER_ISR(irq, irq_handler, (void *)NULL);
-
-    asm("CPS #0x13\n");
+    printf("---------------------> Hello World from secure-processor!!!\n");
 
     // Boot for secure world
     CPU_INIT();
@@ -418,14 +308,21 @@ int main()
     enableTLB();
     setSVCHandler();
     
-    // Boot for unsecure world
-    enterNonSecure();   
+    ENTER_NON_SECURE_USING_MONITOR();
+    printf("---------------------------------->  Leaving secure world\n");
+ 
+
     REGISTER_ISR(irq, irq_handler, (void *)NULL);
-    ENABLE_INTERRUPTS(); 
 
-    printf("-----------------------------------------> main com interrupções ativas\n");
 
-    run();
+    if( iteration != NB_ITERATIONS) {
+          ENABLE_INTERRUPTS(); 
+          printf("-----------------------------------------> main com interrupções ativas\n");
+          run();  
+    }
+    
 
-    return 0;
+    puts("###### E X E C U T O U     C O M     S U C E S S O  (mas com gambiarra) ");
+
+    exit(0);
 }
