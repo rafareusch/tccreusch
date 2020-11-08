@@ -6,6 +6,8 @@
 #include "armDefines.h"
 #include "arm7_support.h"
 #include "rxApi.h"
+#include "tweetnacl.h"
+#include "sha256.h"
 
 
 #define ENTER_SECURE_USING_MONITOR() asm("mov r2, #1\n" "SMC #0\n" )
@@ -21,6 +23,9 @@
 #define DISABLE_BRIDGE_COMMUNICATION() *TZPC_DECPROT0_CLR = 1
 
 #define ENABLE_BRIDGE_COMMUNICATION() *TZPC_DECPROT0_SET = 1;
+
+#define PRIV_KEY_LEN 32
+#define PUB_KEY_LEN 32
 
 register r2 asm("r2");
 
@@ -69,6 +74,19 @@ static void smc_handler(void *ud)
     "B SMC_Handler_Main\n"
     );
 }
+
+// print hex strings
+void hexdump(char * data, int len) 
+{
+    int i;
+    //data = &shared_Status;
+    //len = 0x080;
+    for (i = 0; i < len; i++) {
+        printf("%02X", (unsigned char)data[i]);
+    }
+    printf("\n");
+}
+
 
 // IRQ handler - called when any sort peripheral signals completion
 static void irq_handler(void *ud)
@@ -259,7 +277,45 @@ void memoryAcessTest(int size){
 
 
 ////////// espera chegar, e envia ////////// 
-void run() 
+
+
+
+int state = 0;
+
+// KEY DECLARATIONS
+typedef struct {
+    unsigned char sk[PRIV_KEY_LEN];
+    unsigned char pk[PUB_KEY_LEN];
+} ec_keys;
+
+ec_keys EC_keys; 
+unsigned char sharedSecret[PUB_KEY_LEN];
+unsigned char sessionKey[32];
+// END
+
+
+void run (){
+
+   
+    runExample1();
+}
+
+void runExample2(){
+    
+    crypto_box_keypair(EC_keys.pk, EC_keys.sk);
+    printf("##### Private Key: ");
+    hexdump((char *)&EC_keys.sk,  PUB_KEY_LEN);
+    fflush(stdout);
+    printf("##### Public Key: ");
+    hexdump((char *)&EC_keys.pk,  PUB_KEY_LEN);
+    fflush(stdout);
+    printf("\n");
+
+    
+
+}
+
+void runExample1() 
 {  
     for(   ; iteration < NB_ITERATIONS ; )  {
 
@@ -310,10 +366,10 @@ int main()
     
     ENTER_NON_SECURE_USING_MONITOR();
     printf("---------------------------------->  Leaving secure world\n");
- 
+    //runExample2();
 
     REGISTER_ISR(irq, irq_handler, (void *)NULL);
-
+    
 
     if( iteration != NB_ITERATIONS) {
           ENABLE_INTERRUPTS(); 
