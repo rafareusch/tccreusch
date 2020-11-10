@@ -30,7 +30,7 @@
 register r2 asm("r2");
 
 
-#define  NB_ITERATIONS 24
+#define  NB_ITERATIONS 3
 
 int received=0;
 int iteration=0;
@@ -44,6 +44,20 @@ typedef struct{
 
 
 #define HEADER_SIZE 8
+
+
+// KEY DECLARATIONS
+typedef struct {
+    unsigned char sk[PRIV_KEY_LEN];
+    unsigned char pk[PUB_KEY_LEN];
+} ec_keys;
+
+ec_keys EC_keys; 
+
+unsigned char sharedSecret[PUB_KEY_LEN];
+unsigned char sessionKey[PUB_KEY_LEN];
+unsigned char dataFromMemory[PUB_KEY_LEN];
+// END
 
 
 enum
@@ -243,7 +257,7 @@ void setSVCHandler()
 
 
 void sendProcess(int target, int command){
-
+    printf("RS is sending to %d",target);
     char messageOut[100];
 
     sprintf(messageOut,"%d Message from Secure Processor", command);
@@ -253,7 +267,24 @@ void sendProcess(int target, int command){
 
 }
 
+void sendKey(int target){
 
+    char messageOut[100];
+
+    memcpy(messageOut,EC_keys.pk,PUB_KEY_LEN);
+    printf("Key:");
+
+    hexdump((char *)&EC_keys.pk,  PUB_KEY_LEN);
+    fflush(stdout);
+    printf("\n");
+    requireToSend();
+    sendMessage(target, messageOut);
+
+}
+
+
+
+unsigned char sessionKey[PUB_KEY_LEN];
 
 //////////  le os dados da região segura ////////////////////////////// 
 void memoryAcessTest(int size){
@@ -265,8 +296,10 @@ void memoryAcessTest(int size){
    printf("------------------------------------------------------------------------------------->  memoryAcessTest Entered in secure world\n");
  
    printf("------Memory acess test--------------#########>> ||");
-   for(offset = 0; offset < size ; offset++)
+   for(offset = 0; offset < size ; offset++){
        printf("%c", *(SECURE_MEMORY_REGION + offset));
+       dataFromMemory[offset] = *(SECURE_MEMORY_REGION + offset);
+   }
 
    printf("||\n\n");
       
@@ -279,19 +312,8 @@ void memoryAcessTest(int size){
 ////////// espera chegar, e envia ////////// 
 
 
-
 int state = 0;
 
-// KEY DECLARATIONS
-typedef struct {
-    unsigned char sk[PRIV_KEY_LEN];
-    unsigned char pk[PUB_KEY_LEN];
-} ec_keys;
-
-ec_keys EC_keys; 
-unsigned char sharedSecret[PUB_KEY_LEN];
-unsigned char sessionKey[32];
-// END
 
 
 void run (){
@@ -300,24 +322,69 @@ void run (){
     runExample1();
 }
 
-void runExample2(){
-    
-    crypto_box_keypair(EC_keys.pk, EC_keys.sk);
-    printf("##### Private Key: ");
+
+
+void computeSessionKey(){
+
+    // SHARED SECRET COMPUTING
+    printf("RS received Public Key: ");
+    hexdump((char *)&dataFromMemory,  PUB_KEY_LEN);
+    fflush(stdout);
+
+    printf("RS Secret Key: ");
     hexdump((char *)&EC_keys.sk,  PUB_KEY_LEN);
     fflush(stdout);
-    printf("##### Public Key: ");
+
+    crypto_box_beforenm(sharedSecret,dataFromMemory,EC_keys.sk);
+    printf("RNS 1 Shared Secret: ");
+    hexdump((char*)sharedSecret, PUB_KEY_LEN); 
+
+    // SHA-256 COMPUTING
+    SHA256_CTX ctx;
+    sha256_init(&ctx);
+    //sha256_update(&ctx,(unsigned char*)"abc",3);
+    //sha256_update(&ctx,(unsigned char*)"9CCD5020D72C2525EC178C7C48758156EC831465CE151860BCAAC3A402DA7722",64);
+    sha256_update(&ctx,(unsigned char*)sharedSecret,PUB_KEY_LEN);
+    sha256_final(&ctx,sessionKey);
+    printf("RNS 1 Session Key: ");
+    hexdump((char*)sessionKey, PUB_KEY_LEN);     
+    fflush(stdout);
+
+}
+
+unsigned char skey[64] = {0x1B,0xFE,0xD7,0xCF,0xEE,0x6A,0xEF,0x3D,0x98,0x33,0x61,0x75,0x6F,0xDF,0x4C,0x1C,0x18,0x34,0xAA,0x2E,0x34,0xB1,0x39,0xDF,0xC4,0x56,0x63,0xE3,0xF9,0xA8,0xB3,0x8A};
+unsigned char pkey[64] = {0x9F,0xDC,0x50,0x9B,0xFF,0x42,0x45,0xBD,0x12,0xB8,0x81,0x83,0xBD,0xAF,0x42,0x7A,0xBC,0x1B,0xC9,0xE8,0x14,0x8A,0xE7,0x24,0xA9,0x0C,0x04,0xC8,0x56,0x08,0xB0,0x75};
+
+
+void computeKeys(){
+    
+    memcpy(EC_keys.pk,pkey,PUB_KEY_LEN);
+    memcpy(EC_keys.sk,skey,PRIV_KEY_LEN);
+    //crypto_box_keypair(EC_keys.pk, EC_keys.sk);
+    printf("RS Private Key: ");
+    hexdump((char *)&EC_keys.sk,  PUB_KEY_LEN);
+    fflush(stdout);
+    printf("RS Public Key: ");
     hexdump((char *)&EC_keys.pk,  PUB_KEY_LEN);
     fflush(stdout);
     printf("\n");
 
-    
-
 }
 
+
+int sendKey_lock = 0;
+int computeKey_lock = 0;
+// exemplo MORAES
 void runExample1() 
 {  
-    for(   ; iteration < NB_ITERATIONS ; )  {
+
+    if (!sendKey_lock){
+        sendKey(0);
+        //sendKey(1);
+        sendKey_lock = 1;
+    }
+
+    for(  ; iteration < NB_ITERATIONS ; )  {
 
           // envia pacote para um processador não seguro - o !received evita dois envios!
           if(!received)
@@ -338,6 +405,16 @@ void runExample1()
 
            DISABLE_INTERRUPTS();
            memoryAcessTest(received);
+
+           if (!computeKey_lock){
+            computeSessionKey();
+            computeKey_lock = 1;
+            }
+
+           printf("RS Received KEY:");
+           hexdump((char *)&dataFromMemory,  PUB_KEY_LEN);
+           fflush(stdout);
+           printf("\n");
            ENABLE_INTERRUPTS();
 
            received = 0;
@@ -351,22 +428,23 @@ void runExample1()
 
 
 
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 int main() 
 { 
     received = 0;     
 
     printf("---------------------> Hello World from secure-processor!!!\n");
-
+   
     // Boot for secure world
     CPU_INIT();
     setupTranslationTable();
     enableTLB();
     setSVCHandler();
-    
+    computeKeys();
     ENTER_NON_SECURE_USING_MONITOR();
     printf("---------------------------------->  Leaving secure world\n");
-    //runExample2();
+    
 
     REGISTER_ISR(irq, irq_handler, (void *)NULL);
     
