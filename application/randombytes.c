@@ -48,3 +48,10 @@ void randombytes(unsigned char * ptr,unsigned int length) {
     	ptr[i] = (unsigned char)rand()%256; 
 	}
 }
+
+unsigned char random(){
+    unsigned char lfsr = 0xC6 | clock();
+    unsigned bit;
+    bit  = ((lfsr >> 0) ^ (lfsr >> 2) ^ (lfsr >> 3) ^ (lfsr >> 5) ) & 1;
+    return lfsr =  (lfsr >> 1) | (bit << 4);
+}

@@ -449,7 +449,7 @@ int crypto_scalarmult_base(u8 *q,const u8 *n)
 
 int crypto_box_keypair(u8 *y,u8 *x)
 {
-  randombytes(x,32);
+  //randombytes(x,32);
   return crypto_scalarmult_base(y,x);
 }
 

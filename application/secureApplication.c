@@ -24,9 +24,6 @@
 
 #define ENABLE_BRIDGE_COMMUNICATION() *TZPC_DECPROT0_SET = 1;
 
-#define PRIV_KEY_LEN 32
-#define PUB_KEY_LEN 32
-
 register r2 asm("r2");
 
 
@@ -59,6 +56,7 @@ unsigned char sessionKey[PUB_KEY_LEN];
 unsigned char dataFromMemory[PUB_KEY_LEN];
 // END
 
+unsigned char messageSender = 0;
 
 enum
 {
@@ -130,11 +128,11 @@ static void irq_handler(void *ud)
 
     header.sender =  buffer[0];        // transmissor
     header.messageSize =  buffer[4];  
-
+    messageSender = header.sender;
     if(header.sender == 0 || header.sender == 1)
     {
         ENABLE_BRIDGE_COMMUNICATION();
-        receiveMessage(header.messageSize);
+        receiveMessage(header.messageSize,0,header.sender);
         DISABLE_BRIDGE_COMMUNICATION();
     }
     else
@@ -272,22 +270,42 @@ void sendKey(int target){
     char messageOut[100];
 
     memcpy(messageOut,EC_keys.pk,PUB_KEY_LEN);
-    printf("Key:");
-
-    hexdump((char *)&EC_keys.pk,  PUB_KEY_LEN);
-    fflush(stdout);
-    printf("\n");
     requireToSend();
     sendMessage(target, messageOut);
 
 }
 
 
+// READ KEY FROM SECURE MEMORY
+void memoryKeyRead(int keyid){
+    
+    int memoffset = (keyid+1) * PUB_KEY_LEN;
+    int offset;
+    ENTER_SECURE_USING_MONITOR();
+    printf("Reading key %d from memory\n",memoffset);
+    for(offset = 0; offset < PUB_KEY_LEN ; offset++)
+       dataFromMemory[offset] = *(SECURE_KEY_REGION+(memoffset) + offset);
+    printf("\n");
+      
+   ENTER_NON_SECURE_USING_MONITOR();
 
-unsigned char sessionKey[PUB_KEY_LEN];
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 //////////  le os dados da região segura ////////////////////////////// 
 void memoryAcessTest(int size){
+
 
    int offset = 0;
   
@@ -309,35 +327,32 @@ void memoryAcessTest(int size){
 }
 
 
-////////// espera chegar, e envia ////////// 
+void generateSecretKey(){
 
-
-int state = 0;
-
-
-
-void run (){
-
-   
-    runExample1();
+    int i;
+	srand(0xcba98cf96c2e603ffbcf08785cf17073);
+	for( i = 0; i < 32; i++){
+    	EC_keys.sk[i] = (unsigned char)rand()%256; 
+	}
 }
-
 
 
 void computeSessionKey(){
 
     // SHARED SECRET COMPUTING
-    printf("RS received Public Key: ");
-    hexdump((char *)&dataFromMemory,  PUB_KEY_LEN);
-    fflush(stdout);
+    // printf("RS received Public Key: ");
+    // hexdump((char *)&dataFromMemory,  PUB_KEY_LEN);
+    // fflush(stdout);
 
-    printf("RS Secret Key: ");
-    hexdump((char *)&EC_keys.sk,  PUB_KEY_LEN);
-    fflush(stdout);
+    // printf("RS Secret Key: ");
+    // hexdump((char *)&EC_keys.sk,  PUB_KEY_LEN);
+    // fflush(stdout);
+
+    printf("####### RS is now processing the Session Key\n");
 
     crypto_box_beforenm(sharedSecret,dataFromMemory,EC_keys.sk);
-    printf("RNS 1 Shared Secret: ");
-    hexdump((char*)sharedSecret, PUB_KEY_LEN); 
+    // printf("RS Shared Secret: ");
+    // hexdump((char*)sharedSecret, PUB_KEY_LEN); 
 
     // SHA-256 COMPUTING
     SHA256_CTX ctx;
@@ -346,21 +361,20 @@ void computeSessionKey(){
     //sha256_update(&ctx,(unsigned char*)"9CCD5020D72C2525EC178C7C48758156EC831465CE151860BCAAC3A402DA7722",64);
     sha256_update(&ctx,(unsigned char*)sharedSecret,PUB_KEY_LEN);
     sha256_final(&ctx,sessionKey);
-    printf("RNS 1 Session Key: ");
+    printf("RS and RNS%d Session Key: ", messageSender+1);
     hexdump((char*)sessionKey, PUB_KEY_LEN);     
     fflush(stdout);
 
 }
 
-unsigned char skey[64] = {0x1B,0xFE,0xD7,0xCF,0xEE,0x6A,0xEF,0x3D,0x98,0x33,0x61,0x75,0x6F,0xDF,0x4C,0x1C,0x18,0x34,0xAA,0x2E,0x34,0xB1,0x39,0xDF,0xC4,0x56,0x63,0xE3,0xF9,0xA8,0xB3,0x8A};
-unsigned char pkey[64] = {0x9F,0xDC,0x50,0x9B,0xFF,0x42,0x45,0xBD,0x12,0xB8,0x81,0x83,0xBD,0xAF,0x42,0x7A,0xBC,0x1B,0xC9,0xE8,0x14,0x8A,0xE7,0x24,0xA9,0x0C,0x04,0xC8,0x56,0x08,0xB0,0x75};
+//unsigned char skey[64] = {0x1B,0xFE,0xD7,0xCF,0xEE,0x6A,0xEF,0x3D,0x98,0x33,0x61,0x75,0x6F,0xDF,0x4C,0x1C,0x18,0x34,0xAA,0x2E,0x34,0xB1,0x39,0xDF,0xC4,0x56,0x63,0xE3,0xF9,0xA8,0xB3,0x8A};
+//unsigned char pkey[64] = {0x9F,0xDC,0x50,0x9B,0xFF,0x42,0x45,0xBD,0x12,0xB8,0x81,0x83,0xBD,0xAF,0x42,0x7A,0xBC,0x1B,0xC9,0xE8,0x14,0x8A,0xE7,0x24,0xA9,0x0C,0x04,0xC8,0x56,0x08,0xB0,0x75};
 
 
 void computeKeys(){
-    
-    memcpy(EC_keys.pk,pkey,PUB_KEY_LEN);
-    memcpy(EC_keys.sk,skey,PRIV_KEY_LEN);
-    //crypto_box_keypair(EC_keys.pk, EC_keys.sk);
+    generateSecretKey();
+   
+    crypto_box_keypair(EC_keys.pk, EC_keys.sk);
     printf("RS Private Key: ");
     hexdump((char *)&EC_keys.sk,  PUB_KEY_LEN);
     fflush(stdout);
@@ -368,26 +382,27 @@ void computeKeys(){
     hexdump((char *)&EC_keys.pk,  PUB_KEY_LEN);
     fflush(stdout);
     printf("\n");
-
 }
 
 
-int sendKey_lock = 0;
-int computeKey_lock = 0;
-// exemplo MORAES
-void runExample1() 
-{  
+unsigned char sendKey_lock = 0;
+unsigned char computeKey_lock = 0;
+unsigned char sessionKeyState[2] = {0,0};
 
+
+
+void run (){
+
+    // Envia a chave publica para os processadores não seguros, essencial rodar apenas uma vez.
     if (!sendKey_lock){
         sendKey(0);
-        //sendKey(1);
+        sendKey(1);
         sendKey_lock = 1;
     }
-
-    for(  ; iteration < NB_ITERATIONS ; )  {
-
+    for(  ; iteration < NB_ITERATIONS ; )  {        
+          
           // envia pacote para um processador não seguro - o !received evita dois envios!
-          if(!received)
+          if(!received && sessionKeyState[0] == 1 && sessionKeyState[1] == 1 )
              {  int cmd;
 
                 // avisa os dois periféricos que é última iteração
@@ -406,13 +421,14 @@ void runExample1()
            DISABLE_INTERRUPTS();
            memoryAcessTest(received);
 
-           if (!computeKey_lock){
+           if (sessionKeyState[0] == 0 || sessionKeyState[1] == 0 )
+           {
+            printf("RS received Public Key from RNS%d\n",messageSender+1);
             computeSessionKey();
-            computeKey_lock = 1;
+            sessionKeyState[messageSender] = 1;
             }
 
-           printf("RS Received KEY:");
-           hexdump((char *)&dataFromMemory,  PUB_KEY_LEN);
+           ;
            fflush(stdout);
            printf("\n");
            ENABLE_INTERRUPTS();
@@ -420,12 +436,10 @@ void runExample1()
            received = 0;
            ++iteration;
     }
-
-   puts("###### R U N      E N D E D");
+    puts("###### R U N      E N D E D");
 
    enterNonSecure();   // non secure
 }
-
 
 
 

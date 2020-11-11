@@ -306,7 +306,7 @@ PPM_READ_CB(dataRead)
         if(dataReadCount < header.messageSize)
         {
             bhmMessage("I","Secure buffer data","Reading");
-
+            
             char* prtValue = 0;
             prtValue = &((char*)handles.readSecurePort)[READSECUREPORT_REGS_NS_DATA_OFFSET];
             prtValue = prtValue + dataReadCount;

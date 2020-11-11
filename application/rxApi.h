@@ -9,6 +9,7 @@
 
 
 #define SECURE_MEMORY_REGION ((volatile unsigned char *) (0x01000000))
+#define SECURE_KEY_REGION ((volatile unsigned char *) (0x01000100))
 #include <string.h>
 #include "../peripheral/pse/rules.h"
 
@@ -68,8 +69,9 @@ void ackInterruptHandler()
 
 // @brief: Receive a message with given size from peripheral
 // and save it to secure memory.
-void receiveMessage(int size)
+void receiveMessage(int size,int is_a_key, int keyid)
 {
+    
     int i;
     char* nonSecureMemoryBuffer = malloc(size);
     printf("Reading message of %d\n", size);
@@ -81,6 +83,13 @@ void receiveMessage(int size)
     }
     
     printf("\n######\n");
-    memcpy(SECURE_MEMORY_REGION,nonSecureMemoryBuffer, size);
+    if(is_a_key){
+        int offset = (keyid+1) * PUB_KEY_LEN; 
+        memcpy(SECURE_KEY_REGION+offset,nonSecureMemoryBuffer, size);
+    } else{
+        memcpy(SECURE_MEMORY_REGION,nonSecureMemoryBuffer, size);
+
+    }
+    
     memset(nonSecureMemoryBuffer,0, size);
 }
