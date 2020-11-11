@@ -111,36 +111,30 @@ void computeSessionKey(){
     sha256_init(&ctx);
     sha256_update(&ctx,(unsigned char*)sharedSecret,PUB_KEY_LEN);
     sha256_final(&ctx,sessionKey);
-    printf("########## RNS%d Session Key: ",RNS_ID);
+    printf(" ------------------------------------------------------------------->  RNS%d Session Key: ",RNS_ID);
     hexdump((char*)sessionKey, PUB_KEY_LEN);     
     fflush(stdout);
 }
 
+void ECDH(){
+    unsigned char wd[100];
+    requireToRead(wd);
+    memcpy(hisPublicKey,wd,64);
+    computeKeys();  
+    computeSessionKey(); 
+    memcpy(wd,EC_keys.pk,PRIV_KEY_LEN);
+    sendMessage((RNS_ID-1), wd);
+}
 
 int main() 
 {
   
     enterNonSecure();
     printf("Hello from non-secure processor %d!\n",RNS_ID);
-    // infite loop reacting to the secure processor
-    int i;
 
 
-
-    unsigned char wd[100];
-    // read RS publickey
-    requireToRead(wd);
-    memcpy(hisPublicKey,wd,64);
-    // send own publickey
-    // memcpy(wd,EC_keys.pk,PUB_KEY_LEN);
-    // sendMessage(0, wd);
-
-
-
-    computeKeys();  
-    computeSessionKey(); 
-    memcpy(wd,EC_keys.pk,PRIV_KEY_LEN);
-    sendMessage((RNS_ID-1), wd);
+    ECDH();
+    
     
     example1();
     //while(1);

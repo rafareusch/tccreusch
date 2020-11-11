@@ -69,7 +69,7 @@ void ackInterruptHandler()
 
 // @brief: Receive a message with given size from peripheral
 // and save it to secure memory.
-void receiveMessage(int size,int is_a_key, int keyid)
+void receiveMessage(int size)
 {
     
     int i;
@@ -83,13 +83,6 @@ void receiveMessage(int size,int is_a_key, int keyid)
     }
     
     printf("\n######\n");
-    if(is_a_key){
-        int offset = (keyid+1) * PUB_KEY_LEN; 
-        memcpy(SECURE_KEY_REGION+offset,nonSecureMemoryBuffer, size);
-    } else{
-        memcpy(SECURE_MEMORY_REGION,nonSecureMemoryBuffer, size);
-
-    }
-    
+    memcpy(SECURE_MEMORY_REGION,nonSecureMemoryBuffer, size);
     memset(nonSecureMemoryBuffer,0, size);
 }
