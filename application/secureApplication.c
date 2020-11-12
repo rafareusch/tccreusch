@@ -8,6 +8,7 @@
 #include "rxApi.h"
 #include "tweetnacl.h"
 #include "sha256.h"
+#include "aes.h"
 
 
 #define ENTER_SECURE_USING_MONITOR() asm("mov r2, #1\n" "SMC #0\n" )
@@ -27,7 +28,7 @@
 register r2 asm("r2");
 
 
-#define  NB_ITERATIONS 3
+#define  NB_ITERATIONS 5
 
 int received=0;
 int iteration=0;
@@ -53,7 +54,12 @@ ec_keys EC_keys;
 
 unsigned char sharedSecret[PUB_KEY_LEN];
 unsigned char sessionKey[PUB_KEY_LEN];
-unsigned char dataFromMemory[PUB_KEY_LEN];
+unsigned char dataFromMemory[PACKET_SIZE];
+unsigned char keyFromMemory[PUB_KEY_LEN];
+unsigned char nounce[PUB_KEY_LEN/2];
+unsigned char AESkey[PUB_KEY_LEN/2];
+
+struct AES_ctx ctx;
 // END
 
 unsigned char messageSender = 0;
@@ -286,10 +292,10 @@ void memoryKeyRead(int keyid){
     printf("Reading key %d from memory\n",keyid);
     
     for(offset = 0; offset < PUB_KEY_LEN ; offset++)
-       dataFromMemory[offset] = *(SECURE_KEY_REGION+memoffset+offset);
+       keyFromMemory[offset] = *(SECURE_KEY_REGION+memoffset+offset);
 
     printf("Memory read result: ");
-    hexdump((char*)dataFromMemory, PUB_KEY_LEN);     
+    hexdump((char*)keyFromMemory, PUB_KEY_LEN);     
     printf("\n");
       
    ENTER_NON_SECURE_USING_MONITOR();
@@ -307,29 +313,65 @@ void memoryKeyWrite(int keyid){
 
 
 
-
-//////////  le os dados da região segura ////////////////////////////// 
-void memoryAcessTest(int size){
-
+void memoryDataRead(int size){
 
    int offset = 0;
   
-
+   memset(dataFromMemory,0,PACKET_SIZE);
    ENTER_SECURE_USING_MONITOR();
-   printf("------------------------------------------------------------------------------------->  memoryAcessTest Entered in secure world\n");
+   //printf("------------------------------------------------------------------------------------->  memoryDataRead Entered in secure world\n");
  
-   printf("------Memory acess test--------------#########>> ||");
+   //printf("------Memory acess test--------------#########>> ||");
    for(offset = 0; offset < size ; offset++){
-       printf("%c", *(SECURE_MEMORY_REGION + offset));
+       //printf("%c", *(SECURE_MEMORY_REGION + offset));
        dataFromMemory[offset] = *(SECURE_MEMORY_REGION + offset);
    }
-
-   printf("||\n\n");
+    printf("Memory read result: ");
+    hexdump((char*)keyFromMemory, PUB_KEY_LEN);     
+    printf("\n");
       
    ENTER_NON_SECURE_USING_MONITOR();
-   printf("---------------------------------->  memoryAcessTest Leaving in secure world\n\n\n\n");
-  
+   //printf("---------------------------------->  memoryDataRead Leaving in secure world\n\n\n\n");
+
 }
+
+
+
+void decryptMessage(){
+
+    printf( "\n\n###################################################################################\n");
+    printf(     "################################### STARTING DECRYPT ALGORITHM ####################\n");
+    printf(     "###################################################################################\n\n");
+    memoryKeyRead(messageSender);
+    memoryDataRead(received);
+    memcpy(AESkey,keyFromMemory,PUB_KEY_LEN/2);
+    memcpy(nounce,keyFromMemory+16,PUB_KEY_LEN/2);
+
+
+    printf("Sender: RNS%d",messageSender+1);
+    printf("\n SESSION KEY: ") ;
+    hexdump((char *)&keyFromMemory,  PUB_KEY_LEN);
+    fflush(stdout);
+    printf("\n AES KEY: ") ;
+    hexdump((char *)&AESkey,  PUB_KEY_LEN/2);
+    fflush(stdout);
+    printf("\n NOUNCE: ") ;
+    hexdump((char *)&nounce,  PUB_KEY_LEN/2);
+    fflush(stdout);
+    printf("DATA: ") ;
+    hexdump((char *)&dataFromMemory,  32);
+    fflush(stdout);
+    
+    AES_init_ctx_iv(&ctx, AESkey, nounce); // start AES
+    AES_CBC_decrypt_buffer(&ctx, dataFromMemory, 32);
+    printf("\nDECRYPTED TEXT: %s ", dataFromMemory) ;
+    printf( "\n\n###################################################################################\n");
+    printf(     "################################### END OF DECRYPTION  ############################\n");
+    printf(     "###################################################################################\n\n");
+
+
+}
+
 
 
 void generateSecretKey(){
@@ -345,6 +387,10 @@ void generateSecretKey(){
 void computeSessionKey(){
 
 
+    printf("RS hisPublic Key: ");
+    hexdump((char*)dataFromMemory, PUB_KEY_LEN);
+    printf("RS secret Key: ");
+    hexdump((char*)EC_keys.sk, PUB_KEY_LEN); 
 
     printf("####### RS is now processing the Session Key\n");
     crypto_box_beforenm(sharedSecret,dataFromMemory,EC_keys.sk);
@@ -413,17 +459,23 @@ void run (){
         printf("--------------------------------#########>> Data from NONSEC %d \n\n", iteration);
 
         DISABLE_INTERRUPTS();
-        memoryAcessTest(received);
+        
 
 
         // Esse if controla a autenticação dos dois processadores.
         if (sessionKeyState[0] == 0 || sessionKeyState[1] == 0 )
         {
             printf("RS received Public Key from RNS%d\n",messageSender+1);
+
+            memoryDataRead(received); // this step is essential to compute the session key
             computeSessionKey();
             memoryKeyWrite(messageSender);
             memoryKeyRead(messageSender);
             sessionKeyState[messageSender] = 1;
+        } else {
+            printf("RS received ciphered text\n");
+            decryptMessage();
+            
         }
 
            

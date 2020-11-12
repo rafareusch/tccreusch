@@ -21,7 +21,6 @@ void sendMessage(int sender,char* data)
     while(*RG_TX_REQ_ACK != 1);
     printf("RNS: Ready to send!\n");
 
-
     // SENDING MESSAGE
     if (strlen(data) > PACKET_SIZE){
         size = PACKET_SIZE;

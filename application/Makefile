@@ -18,7 +18,7 @@ all: $(ELF)
 OPTIMISATION?=-O0 -g 
 
 ## NS 1
-secureApplication.$(CROSS).elf : secureApplication.o arm7_support.o arm7_support_asm.o sha256.o tweetnacl.o randombytes.o
+secureApplication.$(CROSS).elf : secureApplication.o arm7_support.o arm7_support_asm.o sha256.o tweetnacl.o randombytes.o aes.o
 	$(V) echo "Linking Application $@"
 	$(V) $($(CROSS)_LINK) $(OPTIMISATION) -o $@  $^ $(IMPERAS_LDFLAGS)
 
@@ -32,6 +32,10 @@ arm7_support.o: arm7_support.c arm7_support.h
 	$(V) $($(CROSS)_CC)  $(OPTIMISATION) -c -o $@  $<
 
 tweetnacl.o: tweetnacl.c tweetnacl.h
+	$(V) echo "Compiling Application $@"
+	$(V) $($(CROSS)_CC)  $(OPTIMISATION) -c -o $@  $<
+
+aes.o: aes.c aes.h
 	$(V) echo "Compiling Application $@"
 	$(V) $($(CROSS)_CC)  $(OPTIMISATION) -c -o $@  $<
 
@@ -52,7 +56,7 @@ arm7_support_asm.o: arm7_support_asm.s
 
 
 ## RNS 1
-nonSecureApplication1.$(CROSS).elf: nonSecureApplication1.o sha256.o tweetnacl.o randombytes.o
+nonSecureApplication1.$(CROSS).elf: nonSecureApplication1.o sha256.o tweetnacl.o randombytes.o aes.o
 	$(V) echo "Linking Application $@"
 	$(V) $($(CROSS)_LINK) $(OPTIMISATION) -o $@  $^ $(IMPERAS_LDFLAGS)
 
@@ -64,7 +68,7 @@ nonSecureApplication1.o: nonSecureApplication1.c arm7_support.h
 
 
 ## RNS 2
-nonSecureApplication2.$(CROSS).elf: nonSecureApplication2.o sha256.o tweetnacl.o randombytes.o
+nonSecureApplication2.$(CROSS).elf: nonSecureApplication2.o sha256.o tweetnacl.o randombytes.o aes.o
 	$(V) echo "Linking Application $@"
 	$(V) $($(CROSS)_LINK) $(OPTIMISATION) -o $@  $^ $(IMPERAS_LDFLAGS)
 

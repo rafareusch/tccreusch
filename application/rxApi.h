@@ -31,7 +31,8 @@ void sendMessage(int target,char* data)
     int i = 0;
     int size = 0;
     // Write header
-   
+    
+
     if (strlen(data) > PACKET_SIZE){
         size = PACKET_SIZE;
         printf("RS: PACKET_SIZE OVERFLOW. Message Size must be under %d bits\n", PACKET_SIZE);
@@ -75,14 +76,22 @@ void receiveMessage(int size)
     int i;
     char* nonSecureMemoryBuffer = malloc(size);
     printf("Reading message of %d\n", size);
-    printf("####\nRECEIVED WAS:\n");
+    
+
     for(i = 0; i< size; i++)
     {
         nonSecureMemoryBuffer[i] = *(RG_READ_DATA);
-        printf("%c",nonSecureMemoryBuffer[i]);
+        //printf("%c",nonSecureMemoryBuffer[i]);
     }
+    printf("####\nRECEIVED WAS:\n");
+    hexdump(nonSecureMemoryBuffer,  size);
+    fflush(stdout);
+
+    
+
     
     printf("\n######\n");
+    memcpy(SECURE_MEMORY_REGION,0, PACKET_SIZE);
     memcpy(SECURE_MEMORY_REGION,nonSecureMemoryBuffer, size);
     memset(nonSecureMemoryBuffer,0, size);
 }

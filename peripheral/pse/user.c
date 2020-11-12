@@ -408,10 +408,10 @@ PPM_REG_WRITE_CB(txWrite)
         }
         if(rnsWriteOffset == header.messageSize)
         {
-            bhmMessage("I","TX Write","End of transmission, generating interrupt to secure processor!");
+            bhmMessage("I","TX Write","End of transmission, generating interrupt to secure processorR!");
             ppmWriteNet(handles.newMessageAvailable, 1);
             rnsWriteOffset = 0;
-            bhmMessage("I","TX Write","%s",bufferRNS);
+            //bhmMessage("I","TX Write","%s",bufferRNS);
             memset(bufferRNS,0,sizeof(bufferRNS));
         }
     }
