@@ -28,7 +28,7 @@
 register r2 asm("r2");
 
 
-#define  NB_ITERATIONS 5
+#define  NB_ITERATIONS 6
 
 int received=0;
 int iteration=0;
@@ -339,9 +339,9 @@ void memoryDataRead(int size){
 
 void decryptMessage(){
 
-    printf( "\n\n###################################################################################\n");
-    printf(     "################################### STARTING DECRYPT ALGORITHM ####################\n");
-    printf(     "###################################################################################\n\n");
+    printf( "\n\n#########################################################################################\n");
+    printf(     "################################### STARTING DECRYPT ALGORITHM ##########################\n");
+    printf(     "#########################################################################################\n\n");
     memoryKeyRead(messageSender);
     memoryDataRead(received);
     memcpy(AESkey,keyFromMemory,PUB_KEY_LEN/2);
@@ -355,19 +355,20 @@ void decryptMessage(){
     printf("\n AES KEY: ") ;
     hexdump((char *)&AESkey,  PUB_KEY_LEN/2);
     fflush(stdout);
-    printf("\n NOUNCE: ") ;
+    printf("\n IV: ") ;
     hexdump((char *)&nounce,  PUB_KEY_LEN/2);
     fflush(stdout);
-    printf("DATA: ") ;
+    printf("CIPHERED DATA: ") ;
     hexdump((char *)&dataFromMemory,  32);
     fflush(stdout);
     
-    AES_init_ctx_iv(&ctx, AESkey, nounce); // start AES
+    AES_init_ctx_iv(&ctx, AESkey, nounce); 
     AES_CBC_decrypt_buffer(&ctx, dataFromMemory, 32);
-    printf("\nDECRYPTED TEXT: %s ", dataFromMemory) ;
-    printf( "\n\n###################################################################################\n");
-    printf(     "################################### END OF DECRYPTION  ############################\n");
-    printf(     "###################################################################################\n\n");
+    printf("\nDECRYPTED TEXT: |%s| ", dataFromMemory);
+
+    printf( "\n\n#######################################################################################\n");
+    printf(     "###################################  END OF DECRYPTION  ###############################\n");
+    printf(     "#######################################################################################\n\n");
 
 
 }

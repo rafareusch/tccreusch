@@ -60,27 +60,30 @@ void example1(){
     for(;;) {
         requireToRead(wd);
         
-        printf("\n\n###################Received: [%s]\n ", wd);
+        printf("\n\n###################Received: [%s]\n\n ", wd);
         
         if (wd[0]=='1')  fim=1;  else fim=0;
         
-
-
         sprintf(wd,"{from NONSEC[%d] to SEC - packet %d}", RNS_ID, i++);
-        AES_CBC_encrypt_buffer(&ctx, wd, 32);
 
-        printf("\nRNS SESSION KEY: ") ;
-        hexdump((char *)&sessionKey,  PUB_KEY_LEN);
-        fflush(stdout);
-        printf("\nRNS AES KEY: ") ;
-        hexdump((char *)&AESkey,  PUB_KEY_LEN/2);
-        fflush(stdout);
-        printf("\nRNS NOUNCE: ") ;
-        hexdump((char *)&nounce,  PUB_KEY_LEN/2);
-        fflush(stdout);
-        printf("\n DATA: ") ;
-        hexdump((char *)&wd, 32);
-        fflush(stdout);
+        AES_init_ctx_iv(&ctx, AESkey, nounce);
+        AES_CBC_encrypt_buffer(&ctx, wd, 32);
+        
+
+        // printf("\nRNS SESSION KEY: ") ;
+        // hexdump((char *)&sessionKey,  PUB_KEY_LEN);
+        // fflush(stdout);
+        // printf("\nRNS AES KEY: ") ;
+        // hexdump((char *)&AESkey,  PUB_KEY_LEN/2);
+        // fflush(stdout);
+        // printf("\nRNS NOUNCE: ") ;
+        // hexdump((char *)&nounce,  PUB_KEY_LEN/2);
+        // fflush(stdout);
+        // printf("\nRNS DATA: ") ;
+        // hexdump((char *)&wd, 32);
+        // fflush(stdout);
+        // printf("\nRNS DECRYPT: %s\n",aux) ;
+
 
 
         //printf(" ### Sending [%s] \n", wd);
@@ -110,9 +113,6 @@ void generateSecretParameters(){
     	EC_keys.sk[i] = (unsigned char)rand()%256; 
 	}
 
-	// for( i = 0; i < 32; i++){
-    // 	nounce[i] = (unsigned char)rand()%256; 
-	// }
 }
 
 void computeKeys(){
