@@ -83,14 +83,12 @@ void receiveMessage(int size)
         nonSecureMemoryBuffer[i] = *(RG_READ_DATA);
         //printf("%c",nonSecureMemoryBuffer[i]);
     }
-    printf("####\nRECEIVED WAS:\n");
+    printf("RS RECEIVED:\n");
     hexdump(nonSecureMemoryBuffer,  size);
     fflush(stdout);
 
     
 
-    
-    printf("\n######\n");
     memcpy(SECURE_MEMORY_REGION,0, PACKET_SIZE);
     memcpy(SECURE_MEMORY_REGION,nonSecureMemoryBuffer, size);
     memset(nonSecureMemoryBuffer,0, size);

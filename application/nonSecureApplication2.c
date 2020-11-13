@@ -49,9 +49,28 @@ void enterNonSecure()
 
 int readKey_lock = 0;
 
+
+
+unsigned char wd[100];
+
+void decryptMessage(){
+    printf("\n\n############## RNS IS DECRYPTING ############\n");
+    printf("\nRNS CIPHERED MESSAGE: ");
+    hexdump((char *)&wd,  PUB_KEY_LEN);
+    fflush(stdout);
+    AES_init_ctx_iv(&ctx, AESkey, nounce); 
+    AES_CBC_decrypt_buffer(&ctx, wd, 32);
+    printf("\nDECRYPTED TEXT: %s ", wd);
+
+}
+
+
+
+
+
 void example1(){
     int fim, i=0;
-    unsigned char wd[100];
+   
     
     // requireToRead(wd);
     // printf("\n\n################### KEY Received: [%s]\n ", wd);
@@ -59,8 +78,10 @@ void example1(){
     
     for(;;) {
         requireToRead(wd);
+        decryptMessage();
         
-        printf("\n\n###################Received: [%s]\n\n ", wd);
+        
+        printf("\n\n---> RNS Received: [%s]\n\n ", wd);
         
         if (wd[0]=='1')  fim=1;  else fim=0;
         
@@ -84,15 +105,12 @@ void example1(){
         // fflush(stdout);
         // printf("\nRNS DECRYPT: %s\n",aux) ;
 
-
-
-        //printf(" ### Sending [%s] \n", wd);
         sendMessage((RNS_ID-1), wd);
 
         if(fim) break;
     }
     
-    printf("#### NONSEC %d ENDED",RNS_ID);
+    printf("######### NONSEC %d ENDED\n",RNS_ID);
 }
 
 //unsigned char pkey[64] = {0xD6,0x79,0x9F,0xB7,0x3A,0xF9,0x68,0xBE,0xF8,0x60,0x1D,0x94,0x67,0x07,0x76,0x1B,0x8C,0xD0,0xED,0xDE,0xBD,0x34,0x8F,0xAF,0xE4,0x64,0xE4,0x48,0x86,0x5F,0x7B,0x60};
@@ -156,6 +174,7 @@ void ECDH(){
     sendMessage((RNS_ID-1), wd);
 }
 
+
 int main() 
 {
   
@@ -169,10 +188,10 @@ int main()
 
     memcpy(AESkey,sessionKey,PUB_KEY_LEN/2);
     memcpy(nounce,sessionKey+16,PUB_KEY_LEN/2);
-    AES_init_ctx_iv(&ctx, AESkey, nounce);
+    //AES_init_ctx_iv(&ctx, AESkey, nounce);
 
 
-printf("\n");
+    printf("\n");
 
     
     example1();

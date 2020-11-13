@@ -28,7 +28,8 @@
 register r2 asm("r2");
 
 
-#define  NB_ITERATIONS 6
+#define  NB_ITERATIONS 7
+#define HEADER_SIZE 8
 
 int received=0;
 int iteration=0;
@@ -41,7 +42,7 @@ typedef struct{
 } messageHeader;
 
 
-#define HEADER_SIZE 8
+
 
 
 // KEY DECLARATIONS
@@ -120,12 +121,12 @@ static void irq_handler(void *ud)
     messageHeader header; //message header
 
 
-    printf("------------------------------------------------------------------------------------->  Received interrupt. Starting handle\n");
+    printf("----------------------------------------------------------------------------->  Received interrupt. Starting handle\n");
     DISABLE_INTERRUPTS();
     ackInterruptHandler();
     
     ENTER_SECURE_USING_MONITOR();
-    printf("------------------------------------------------------------------------------------->  INTERRUPT Entered in secure world\n");
+    printf(" -------------------------> Entering Secure mode\n");
 
     for(i = 0; i< HEADER_SIZE; i++)
         { buffer[i] = *(RG_READ_HEADER_DATA);
@@ -172,16 +173,16 @@ void SMC_Handler_Main()
     
     int smc_number = r2;
 
-    printf("NS - Entered in Super Monitor Call Handler!!! Operation is %d\n", smc_number);
+    //printf("NS - Entered in Super Monitor Call Handler!!! Operation is %d\n", smc_number);
 
     switch (smc_number)
     {
     case TO_SECURE:
-        printf("Writing 0x0 to ns bit  \n");
+        printf("SMC: Entering Secure mode  \n");
         WR_SCR(0);
         break;
     case TO_UNSECURE:
-        printf("Writing 1 to ns bit\n");
+        printf("SMC: Entering Unsecure mode\n");
         WR_SCR(1);
         break;
     default:
@@ -261,13 +262,27 @@ void setSVCHandler()
 
 
 void sendProcess(int target, int command){
-    printf("RS is sending to %d",target);
+
+    printf("###################  RS is sending to RNS%d #########################\n",target+1);
     char messageOut[100];
 
     sprintf(messageOut,"%d Message from Secure Processor", command);
+    printf("Message: %s\n",messageOut);
+    printf("Encrypting message with AES...\n");
+    printf("Encrypted message: ");
+    hexdump((char*)messageOut, PUB_KEY_LEN);  
+    
+    memoryKeyRead(target);
+    memcpy(AESkey,keyFromMemory,PUB_KEY_LEN/2);
+    memcpy(nounce,keyFromMemory+16,PUB_KEY_LEN/2);
+
+    AES_init_ctx_iv(&ctx, AESkey, nounce);
+    AES_CBC_encrypt_buffer(&ctx, messageOut, 32);
 
     requireToSend();
     sendMessage(target, messageOut);
+    //printf("##################################################################################################\n");
+    ENABLE_INTERRUPTS();
 
 }
 
@@ -289,24 +304,26 @@ void memoryKeyRead(int keyid){
     int offset;
     ENTER_SECURE_USING_MONITOR();
 
-    printf("Reading key %d from memory\n",keyid);
+    printf("Reading key %d from memory\n",keyid+1);
     
     for(offset = 0; offset < PUB_KEY_LEN ; offset++)
        keyFromMemory[offset] = *(SECURE_KEY_REGION+memoffset+offset);
 
-    printf("Memory read result: ");
+    printf("Key on memory read: ");
     hexdump((char*)keyFromMemory, PUB_KEY_LEN);     
-    printf("\n");
+    
       
    ENTER_NON_SECURE_USING_MONITOR();
+   printf("\n");
 
 }
 
 void memoryKeyWrite(int keyid){
     int memoffset = keyid * PUB_KEY_LEN;
     ENTER_SECURE_USING_MONITOR();
-
+    printf("Saving session key to secure memory\n");
     memcpy(SECURE_KEY_REGION+memoffset,sessionKey, PUB_KEY_LEN);
+    memcpy(keyFromMemory,sessionKey, PUB_KEY_LEN);
 
     ENTER_NON_SECURE_USING_MONITOR();
 }
@@ -319,19 +336,18 @@ void memoryDataRead(int size){
   
    memset(dataFromMemory,0,PACKET_SIZE);
    ENTER_SECURE_USING_MONITOR();
-   //printf("------------------------------------------------------------------------------------->  memoryDataRead Entered in secure world\n");
- 
-   //printf("------Memory acess test--------------#########>> ||");
+   printf("Reading DATA from secure memory\n");
    for(offset = 0; offset < size ; offset++){
        //printf("%c", *(SECURE_MEMORY_REGION + offset));
        dataFromMemory[offset] = *(SECURE_MEMORY_REGION + offset);
    }
-    printf("Memory read result: ");
-    hexdump((char*)keyFromMemory, PUB_KEY_LEN);     
-    printf("\n");
+    printf("Memory DATA read:  ");
+    hexdump((char*)dataFromMemory, PUB_KEY_LEN);     
+    
       
    ENTER_NON_SECURE_USING_MONITOR();
-   //printf("---------------------------------->  memoryDataRead Leaving in secure world\n\n\n\n");
+   printf("\n");
+ 
 
 }
 
@@ -339,9 +355,9 @@ void memoryDataRead(int size){
 
 void decryptMessage(){
 
-    printf( "\n\n#########################################################################################\n");
-    printf(     "################################### STARTING DECRYPT ALGORITHM ##########################\n");
-    printf(     "#########################################################################################\n\n");
+    printf( "\n\n#########################################################\n");
+    printf(     "################ STARTING DECRYPT ALGORITHM #############\n");
+    printf(     "#########################################################\n\n");
     memoryKeyRead(messageSender);
     memoryDataRead(received);
     memcpy(AESkey,keyFromMemory,PUB_KEY_LEN/2);
@@ -349,26 +365,26 @@ void decryptMessage(){
 
 
     printf("Sender: RNS%d",messageSender+1);
-    printf("\n SESSION KEY: ") ;
+    printf("\nSESSION KEY: ") ;
     hexdump((char *)&keyFromMemory,  PUB_KEY_LEN);
     fflush(stdout);
-    printf("\n AES KEY: ") ;
+    printf("\nAES KEY: ") ;
     hexdump((char *)&AESkey,  PUB_KEY_LEN/2);
     fflush(stdout);
-    printf("\n IV: ") ;
+    printf("\nIV: ") ;
     hexdump((char *)&nounce,  PUB_KEY_LEN/2);
     fflush(stdout);
-    printf("CIPHERED DATA: ") ;
+    printf("\nCIPHERED DATA: ") ;
     hexdump((char *)&dataFromMemory,  32);
     fflush(stdout);
     
     AES_init_ctx_iv(&ctx, AESkey, nounce); 
     AES_CBC_decrypt_buffer(&ctx, dataFromMemory, 32);
-    printf("\nDECRYPTED TEXT: |%s| ", dataFromMemory);
+    printf("\nDECRYPTED TEXT: %s ", dataFromMemory);
 
-    printf( "\n\n#######################################################################################\n");
-    printf(     "###################################  END OF DECRYPTION  ###############################\n");
-    printf(     "#######################################################################################\n\n");
+    printf( "\n\n##########################################################\n");
+    printf(     "##################  END OF DECRYPTION  ###################\n");
+    printf(     "##########################################################\n\n");
 
 
 }
@@ -388,12 +404,12 @@ void generateSecretKey(){
 void computeSessionKey(){
 
 
-    printf("RS hisPublic Key: ");
-    hexdump((char*)dataFromMemory, PUB_KEY_LEN);
-    printf("RS secret Key: ");
-    hexdump((char*)EC_keys.sk, PUB_KEY_LEN); 
+    // printf("RS hisPublic Key: ");
+    // hexdump((char*)dataFromMemory, PUB_KEY_LEN);
+    // printf("RS secret Key: ");
+    // hexdump((char*)EC_keys.sk, PUB_KEY_LEN); 
 
-    printf("####### RS is now processing the Session Key\n");
+    printf("\n############ RS is now computing the Session Key\n");
     crypto_box_beforenm(sharedSecret,dataFromMemory,EC_keys.sk);
 
     // SHA-256 COMPUTING
@@ -402,9 +418,10 @@ void computeSessionKey(){
 
     sha256_update(&ctx,(unsigned char*)sharedSecret,PUB_KEY_LEN);
     sha256_final(&ctx,sessionKey);
-    printf(" -------------------------------------------------------------------> RS and RNS%d Session Key: ", messageSender+1);
+    printf("############ RS and RNS%d Session Key: ", messageSender+1);
     hexdump((char*)sessionKey, PUB_KEY_LEN);     
     fflush(stdout);
+    printf("\n");
 
 }
 
@@ -435,6 +452,7 @@ void run (){
 
     // Envia a chave publica para os processadores não seguros, essencial rodar apenas uma vez.
     if (!sendKey_lock){
+        printf("> RS will now send it's Public Key to RNS1 and RNS2\n\n");
         sendKey(0);
         sendKey(1);
         sendKey_lock = 1;
@@ -454,10 +472,14 @@ void run (){
             else
                     { sendProcess( 1, cmd );  previous=0;}
             }
+            
         
         while( received==0 );  // espera resposta da interrupção
-
-        printf("--------------------------------#########>> Data from NONSEC %d \n\n", iteration);
+        
+        printf("\n###########################################################################################################\n");
+        printf(  "################################################ RS RECEIVED DATA #########################################\n");
+        printf(  "################################################  HANDLE START ############################################\n\n");
+        //printf("--------------------------------#########>> Data from NONSEC %d \n\n", iteration);
 
         DISABLE_INTERRUPTS();
         
@@ -466,15 +488,15 @@ void run (){
         // Esse if controla a autenticação dos dois processadores.
         if (sessionKeyState[0] == 0 || sessionKeyState[1] == 0 )
         {
-            printf("RS received Public Key from RNS%d\n",messageSender+1);
-
+            printf("> RS reports it has received Public Key from RNS%d\nStarting Diffie-Hellman Key-Exchange...\n\n",messageSender+1);
+            //printf("Reading key received from secure memory\n");
             memoryDataRead(received); // this step is essential to compute the session key
             computeSessionKey();
             memoryKeyWrite(messageSender);
-            memoryKeyRead(messageSender);
+            //memoryKeyRead(messageSender);
             sessionKeyState[messageSender] = 1;
         } else {
-            printf("RS received ciphered text\n");
+            printf("> RS reports it has received a ciphered message from RNS%d\nStarting AES decryption...\n\n",messageSender+1);
             decryptMessage();
             
         }
@@ -482,14 +504,14 @@ void run (){
            
         fflush(stdout);
         printf("\n");
+        printf(  "############################################ END HANDLE ###############################################\n\n\n");
         ENABLE_INTERRUPTS();
 
         received = 0;
         ++iteration;
     }
     puts("###### R U N      E N D E D");
-
-   enterNonSecure();   // non secure
+    enterNonSecure();   // non secure
 }
 
 
@@ -499,7 +521,8 @@ int main()
 { 
     received = 0;     
 
-    printf("---------------------> Hello World from secure-processor!!!\n");
+    printf("---------------------> Starting Secure Processor...!\n");
+    printf("-----> Initializing EC keys....\n");
    
     // Boot for secure world
     CPU_INIT();
@@ -508,7 +531,7 @@ int main()
     setSVCHandler();
     computeKeys();
     ENTER_NON_SECURE_USING_MONITOR();
-    printf("---------------------------------->  Leaving secure world\n");
+    
     
 
     REGISTER_ISR(irq, irq_handler, (void *)NULL);
@@ -516,12 +539,12 @@ int main()
 
     if( iteration != NB_ITERATIONS) {
           ENABLE_INTERRUPTS(); 
-          printf("-----------------------------------------> main com interrupções ativas\n");
+          
           run();  
     }
     
 
-    puts("###### E X E C U T O U     C O M     S U C E S S O  (mas com gambiarra) ");
+    puts("#############  E X E C U T O U     C O M     S U C E S S O  ################### ");
 
     exit(0);
 }
