@@ -262,25 +262,32 @@ void setSVCHandler()
 
 
 void sendProcess(int target, int command){
-
-    printf("###################  RS is sending to RNS%d #########################\n",target+1);
+    printf("___________________________________________________________________________\n");
+    printf("################# RS is starting send process to RNS%d ####################\n\n",target+1);
+    
     char messageOut[100];
 
     sprintf(messageOut,"%d Message from Secure Processor", command);
-    printf("Message: %s\n",messageOut);
-    printf("Encrypting message with AES...\n");
-    printf("Encrypted message: ");
-    hexdump((char*)messageOut, PUB_KEY_LEN);  
-    
+    printf("String Message: %s\n",messageOut);
+    printf("HEX Message: ");
+    hexdump((char*)messageOut, PUB_KEY_LEN); 
+    printf("\n");
     memoryKeyRead(target);
+
+    printf("Encrypting message with AES...\n");
     memcpy(AESkey,keyFromMemory,PUB_KEY_LEN/2);
     memcpy(nounce,keyFromMemory+16,PUB_KEY_LEN/2);
 
     AES_init_ctx_iv(&ctx, AESkey, nounce);
     AES_CBC_encrypt_buffer(&ctx, messageOut, 32);
 
+    printf("Encrypted message: %s");
+    hexdump((char*)messageOut, PUB_KEY_LEN);  
+    printf("\n");
     requireToSend();
     sendMessage(target, messageOut);
+    printf("________________________________________________________________________\n");
+    printf(    "######################## End of transmission ###########################\n\n",target+1);
     //printf("##################################################################################################\n");
     ENABLE_INTERRUPTS();
 

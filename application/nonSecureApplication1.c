@@ -54,13 +54,14 @@ int readKey_lock = 0;
 unsigned char wd[100];
 
 void decryptMessage(){
-    printf("\n\n############## RNS IS DECRYPTING ############\n");
+    printf("\n\n################### RNS IS DECRYPTING #################\n");
     printf("\nRNS CIPHERED MESSAGE: ");
     hexdump((char *)&wd,  PUB_KEY_LEN);
     fflush(stdout);
     AES_init_ctx_iv(&ctx, AESkey, nounce); 
     AES_CBC_decrypt_buffer(&ctx, wd, 32);
     printf("\nDECRYPTED TEXT: %s ", wd);
+     printf("\n\n################### END OF DECRYPT #################\n\n");
 
 }
 
@@ -81,7 +82,7 @@ void example1(){
         decryptMessage();
         
         
-        printf("\n\n---> RNS Received: [%s]\n\n ", wd);
+        //printf("\n\n---> RNS Received: [%s]\n\n ", wd);
         
         if (wd[0]=='1')  fim=1;  else fim=0;
         
@@ -90,7 +91,6 @@ void example1(){
         AES_init_ctx_iv(&ctx, AESkey, nounce);
         AES_CBC_encrypt_buffer(&ctx, wd, 32);
         
-
         // printf("\nRNS SESSION KEY: ") ;
         // hexdump((char *)&sessionKey,  PUB_KEY_LEN);
         // fflush(stdout);
@@ -117,7 +117,6 @@ void example1(){
 //unsigned char skey[64] = {0x01,0x03,0xAD,0x86,0xF1,0x9F,0xCF,0xE6,0x7B,0xE3,0x91,0x0C,0x52,0x89,0xC6,0xB9,0xAB,0xCD,0x63,0xF7,0x3C,0xF2,0x19,0x6E,0x36,0x9C,0x99,0xF8,0x6D,0x81,0xED,0x3A};
 
 
-
 void generateSecretParameters(){
 
     int i;
@@ -134,7 +133,7 @@ void generateSecretParameters(){
 }
 
 void computeKeys(){
-    printf("\n### RNS%d is initializing cryptographic variables...\n",RNS_ID);
+    printf("\n############## RNS%d is initializing cryptographic variables...\n\n",RNS_ID);
 
     generateSecretParameters();
 
@@ -149,7 +148,7 @@ void computeKeys(){
 
 void computeSessionKey(){
 
-    printf("###### RNS%d is now processing the Session Key\n",RNS_ID);
+    printf("\n#################### RNS%d is now processing the Session Key ####################\n\n",RNS_ID);
     crypto_box_beforenm(sharedSecret,hisPublicKey,EC_keys.sk);
     // printf("RNS%d Shared Secret: ",RNS_ID);
     // hexdump((char*)sharedSecret, PUB_KEY_LEN); 
