@@ -5,7 +5,7 @@ CROSS ?= ARM_CORTEX_A8
 run: platform/platform.$(IMPERAS_ARCH).exe application/application.$(CROSS).elf 
 	platform/platform.$(IMPERAS_ARCH).exe \
 	--program RScpu=application/secureApplication.${CROSS}.elf \
-	--program cpuRNS1=application/nonSecureApplication1.${CROSS}.elf \
+	--program cpuRNS1=application/nonSecureApplication1.${CROSS}.elf  \
 	--program cpuRNS2=application/nonSecureApplication2.${CROSS}.elf \
     | tee imperas.log
 
@@ -20,6 +20,10 @@ platform/platform.$(IMPERAS_ARCH).exe : platform/platform.c
 
 application/application.$(CROSS).elf: application/secureApplication.c
 	$(MAKE) -C application
+
+debugrun: harness.$(CROSS).exe --verbose --modulefile platform/model.so --program RScpu=application/secureApplication.ARM_CORTEX_A8.elf  
+	--program cpuRNS1=application/nonSecureApplication1.ARM_CORTEX_A8.elf  
+	--program cpuRNS2=application/nonSecureApplication2.ARM_CORTEX_A8.elf 
 
 
 clean:

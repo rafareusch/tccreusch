@@ -260,14 +260,23 @@ void setSVCHandler()
 }
 
 
+unsigned char msg0[64] = {0x5A,0xD6,0x54,0x79,0xFB,0xCE,0x9A,0x7B,0x6E,0x78,0x83,0xBB,0xDB,0x39,0x5A,0xAD,0xB9,0x6C,0x4C,0xDF,0xA7,0xA4,0x0C,0xE8,0xB5,0xA8,0x19,0x6A,0x8D,0xF9,0xF9,0xEC};
+unsigned char msg1[64] = {0xCF,0xA0,0xA4,0x2C,0xC2,0xFB,0x92,0x1D,0x93,0xCE,0x2F,0xA2,0x29,0xA6,0xB6,0x8A,0x0F,0xE6,0x5A,0x1E,0x0C,0x79,0x46,0x17,0xCE,0x82,0xE6,0xCB,0xF3,0xDF,0x32,0xB3};
+
 
 void sendProcess(int target, int command){
     printf("___________________________________________________________________________\n");
-    printf("################# RS is starting send process to RNS%d ####################\n\n",target+1);
+    printf("################# Server is starting send process to RNS%d ####################\n\n",target+1);
     
     char messageOut[100];
 
-    sprintf(messageOut,"%d Message from Secure Processor", command);
+    // if (command == 1){
+    //     memcpy(messageOut,msg1,PUB_KEY_LEN);
+    // } else {
+    //     memcpy(messageOut,msg0,PUB_KEY_LEN);
+    // }
+
+    sprintf(messageOut,"%d Message from Server", command);
     printf("String Message: %s\n",messageOut);
     printf("HEX Message: ");
     hexdump((char*)messageOut, PUB_KEY_LEN); 
@@ -411,12 +420,12 @@ void generateSecretKey(){
 void computeSessionKey(){
 
 
-    // printf("RS hisPublic Key: ");
-    // hexdump((char*)dataFromMemory, PUB_KEY_LEN);
-    // printf("RS secret Key: ");
-    // hexdump((char*)EC_keys.sk, PUB_KEY_LEN); 
+    printf("Client Public Key: ");
+    hexdump((char*)dataFromMemory, PUB_KEY_LEN);
+    printf("Server secret Key: ");
+    hexdump((char*)EC_keys.sk, PUB_KEY_LEN); 
 
-    printf("\n############ RS is now computing the Session Key\n");
+    printf("\n############ Server is now computing the Session Key\n");
     crypto_box_beforenm(sharedSecret,dataFromMemory,EC_keys.sk);
 
     // SHA-256 COMPUTING
@@ -425,7 +434,7 @@ void computeSessionKey(){
 
     sha256_update(&ctx,(unsigned char*)sharedSecret,PUB_KEY_LEN);
     sha256_final(&ctx,sessionKey);
-    printf("############ RS and RNS%d Session Key: ", messageSender+1);
+    printf("############ Server and Client %d Session Key: ", messageSender+1);
     hexdump((char*)sessionKey, PUB_KEY_LEN);     
     fflush(stdout);
     printf("\n");
@@ -435,14 +444,21 @@ void computeSessionKey(){
 //unsigned char skey[64] = {0x1B,0xFE,0xD7,0xCF,0xEE,0x6A,0xEF,0x3D,0x98,0x33,0x61,0x75,0x6F,0xDF,0x4C,0x1C,0x18,0x34,0xAA,0x2E,0x34,0xB1,0x39,0xDF,0xC4,0x56,0x63,0xE3,0xF9,0xA8,0xB3,0x8A};
 //unsigned char pkey[64] = {0x9F,0xDC,0x50,0x9B,0xFF,0x42,0x45,0xBD,0x12,0xB8,0x81,0x83,0xBD,0xAF,0x42,0x7A,0xBC,0x1B,0xC9,0xE8,0x14,0x8A,0xE7,0x24,0xA9,0x0C,0x04,0xC8,0x56,0x08,0xB0,0x75};
 
+
+unsigned char skey[64] = {0x4B,0x65,0xE1,0xE6,0x2A,0x9B,0x32,0x3E,0x12,0xF4,0x00,0x39,0xAE,0x8C,0x5C,0xF2,0x5C,0xE7,0xBD,0x20,0x0E,0x4F,0xAE,0x02,0x89,0xD8,0x8B,0xB9,0xF3,0x86,0x5D,0x6C};
+unsigned char pkey[64] = {0x3B,0x97,0x04,0x82,0xD2,0xB4,0x21,0x28,0x57,0x41,0xBA,0x65,0x8F,0x81,0x5E,0x0A,0x7A,0x73,0x03,0x58,0xFA,0xE4,0x12,0x3A,0xB0,0x15,0x4A,0xF0,0xCF,0xE4,0x50,0x58};
+unsigned char keycli1[64] = {0xC0,0x2D,0x53,0x52,0x1C,0x74,0xC1,0xD8,0xEA,0x23,0xD4,0xE2,0xBF,0xD6,0xDC,0x72,0x71,0xE5,0x7A,0x71,0x0F,0x4A,0xBD,0x64,0x20,0xB4,0xB7,0xD0,0x14,0x0F,0x0F,0x03};
+unsigned char keycli2[64] = {0xDF,0x67,0xE0,0x68,0xBB,0x60,0x65,0x65,0x00,0x3F,0xFF,0xC8,0x12,0xEB,0x95,0xA3,0x38,0xA8,0x86,0x25,0xA0,0x2A,0x0A,0xA5,0x0E,0x75,0x58,0x3B,0xBF,0x3D,0x2F,0xD6};
+
 void computeKeys(){
     generateSecretKey();
-   
+    //memcpy(EC_keys.sk,skey,64);
+    //memcpy(EC_keys.pk,pkey,64);
     crypto_box_keypair(EC_keys.pk, EC_keys.sk);
-    printf("RS Private Key: ");
+    printf("Server Private Key: ");
     hexdump((char *)&EC_keys.sk,  PUB_KEY_LEN);
     fflush(stdout);
-    printf("RS Public Key: ");
+    printf("Server Public Key: ");
     hexdump((char *)&EC_keys.pk,  PUB_KEY_LEN);
     fflush(stdout);
     printf("\n");
@@ -459,7 +475,7 @@ void run (){
 
     // Envia a chave publica para os processadores não seguros, essencial rodar apenas uma vez.
     if (!sendKey_lock){
-        printf("> RS will now send it's Public Key to RNS1 and RNS2\n\n");
+        printf("> Server will now send it's Public Key to Client 1 and Client 2\n\n");
         sendKey(0);
         sendKey(1);
         sendKey_lock = 1;
@@ -483,9 +499,9 @@ void run (){
         
         while( received==0 );  // espera resposta da interrupção
         
-        printf("\n###########################################################################################################\n");
-        printf(  "################################################ RS RECEIVED DATA #########################################\n");
-        printf(  "################################################  HANDLE START ############################################\n\n");
+        printf("\n############################################################################################################\n");
+        printf(  "############################################# SERVER RECEIVED DATA #########################################\n");
+        printf(  "#################################################  HANDLE START ############################################\n\n");
         //printf("--------------------------------#########>> Data from NONSEC %d \n\n", iteration);
 
         DISABLE_INTERRUPTS();
@@ -495,15 +511,22 @@ void run (){
         // Esse if controla a autenticação dos dois processadores.
         if (sessionKeyState[0] == 0 || sessionKeyState[1] == 0 )
         {
-            printf("> RS reports it has received Public Key from RNS%d\nStarting Diffie-Hellman Key-Exchange...\n\n",messageSender+1);
+            printf("> SERV reports it has received Public Key from CLI%d\nStarting Diffie-Hellman Key-Exchange...\n\n",messageSender+1);
             //printf("Reading key received from secure memory\n");
             memoryDataRead(received); // this step is essential to compute the session key
             computeSessionKey();
+            // if (messageSender == 0){
+            //     memcpy(sessionKey,keycli1,64);
+            // } else{
+            //     memcpy(sessionKey,keycli2,64);
+
+            // }
+            
             memoryKeyWrite(messageSender);
             //memoryKeyRead(messageSender);
             sessionKeyState[messageSender] = 1;
         } else {
-            printf("> RS reports it has received a ciphered message from RNS%d\nStarting AES decryption...\n\n",messageSender+1);
+            printf("> SERV reports it has received a ciphered message from CLI%d\nStarting AES decryption...\n\n",messageSender+1);
             decryptMessage();
             
         }

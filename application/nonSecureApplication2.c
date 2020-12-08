@@ -25,6 +25,7 @@ unsigned char sessionKey[PUB_KEY_LEN];
 unsigned char hisPublicKey[PUB_KEY_LEN];
 unsigned char nounce[PUB_KEY_LEN/2];
 unsigned char AESkey[PUB_KEY_LEN/2];
+unsigned char wd[100];
 
 
 // print hex strings
@@ -51,11 +52,10 @@ int readKey_lock = 0;
 
 
 
-unsigned char wd[100];
 
 void decryptMessage(){
-    printf("\n\n################### RNS IS DECRYPTING #################\n");
-    printf("\nRNS CIPHERED MESSAGE: ");
+    printf("\n\n################### CLI IS DECRYPTING #################\n");
+    printf("\nCLI CIPHERED MESSAGE: ");
     hexdump((char *)&wd,  PUB_KEY_LEN);
     fflush(stdout);
     AES_init_ctx_iv(&ctx, AESkey, nounce); 
@@ -64,9 +64,6 @@ void decryptMessage(){
      printf("\n\n################### END OF DECRYPT #################\n\n");
 
 }
-
-
-
 
 
 void example1(){
@@ -86,24 +83,26 @@ void example1(){
         
         if (wd[0]=='1')  fim=1;  else fim=0;
         
-        sprintf(wd,"{from NONSEC[%d] to SEC - packet %d}", RNS_ID, i++);
+        sprintf(wd,"{from CLIENT[%d] to SEC - packet %d}", RNS_ID, i++);
+
+
+        printf("\nCLI AES KEY: ") ;
+        hexdump((char *)&AESkey,  PUB_KEY_LEN/2);
+        fflush(stdout);
+        printf("\nCLI NOUNCE: ") ;
+        hexdump((char *)&nounce,  PUB_KEY_LEN/2);
+        fflush(stdout);
+      
+        printf("\nCLI PLAIN TEXT: %s\n",wd) ;
 
         AES_init_ctx_iv(&ctx, AESkey, nounce);
         AES_CBC_encrypt_buffer(&ctx, wd, 32);
-        
-        // printf("\nRNS SESSION KEY: ") ;
-        // hexdump((char *)&sessionKey,  PUB_KEY_LEN);
-        // fflush(stdout);
-        // printf("\nRNS AES KEY: ") ;
-        // hexdump((char *)&AESkey,  PUB_KEY_LEN/2);
-        // fflush(stdout);
-        // printf("\nRNS NOUNCE: ") ;
-        // hexdump((char *)&nounce,  PUB_KEY_LEN/2);
-        // fflush(stdout);
-        // printf("\nRNS DATA: ") ;
-        // hexdump((char *)&wd, 32);
-        // fflush(stdout);
-        // printf("\nRNS DECRYPT: %s\n",aux) ;
+
+        printf("\nCLI CIPHERED TEXT: ") ;
+        hexdump((char *)&wd, 32);
+        fflush(stdout);
+
+       
 
         sendMessage((RNS_ID-1), wd);
 
@@ -133,32 +132,41 @@ void generateSecretParameters(){
 }
 
 void computeKeys(){
-    printf("\n############## RNS%d is initializing cryptographic variables...\n\n",RNS_ID);
+    printf("\n############## CLI%d is initializing cryptographic variables...\n\n",RNS_ID);
 
     generateSecretParameters();
 
     crypto_box_keypair(EC_keys.pk, EC_keys.sk); 
-    printf("RNS %d Private Key: HEX ",RNS_ID);
+    printf("CLI %d Private Key: HEX ",RNS_ID);
     hexdump((char *)&EC_keys.sk,  PUB_KEY_LEN);
     fflush(stdout);
-    printf("RNS %d Public Key: ",RNS_ID);
+    printf("CLI %d Public Key: ",RNS_ID);
     hexdump((char *)&EC_keys.pk,  PUB_KEY_LEN);
     fflush(stdout);
 }
 
 void computeSessionKey(){
 
-    printf("\n#################### RNS%d is now processing the Session Key ####################\n\n",RNS_ID);
+
+    printf("Sever Public Key: ");
+    hexdump((char*)hisPublicKey, PUB_KEY_LEN);
+    printf("Client secret Key: ");
+    hexdump((char*)EC_keys.sk, PUB_KEY_LEN); 
+
+
+    printf("\n#################### CLI%d is now processing the Shared Secret ####################\n\n",RNS_ID);
     crypto_box_beforenm(sharedSecret,hisPublicKey,EC_keys.sk);
-    // printf("RNS%d Shared Secret: ",RNS_ID);
-    // hexdump((char*)sharedSecret, PUB_KEY_LEN); 
+    printf("CLI%d Shared Secret: ",RNS_ID);
+    hexdump((char*)sharedSecret, PUB_KEY_LEN); 
+
+    printf("Performing hash operation\n");
 
     //SHA-256 COMPUTING
     SHA256_CTX ctx;
     sha256_init(&ctx);
     sha256_update(&ctx,(unsigned char*)sharedSecret,PUB_KEY_LEN);
     sha256_final(&ctx,sessionKey);
-    printf(" ------------------------------------------------------------------->  RNS%d Session Key: ",RNS_ID);
+    printf(" ------------------------------------------------------------------->  CLI%d Session Key: ",RNS_ID);
     hexdump((char*)sessionKey, PUB_KEY_LEN);        
     fflush(stdout);
 }
@@ -178,23 +186,15 @@ int main()
 {
   
     enterNonSecure();
-    printf("Hello from non-secure processor %d!\n",RNS_ID);
+    printf("Hello from client %d!\n",RNS_ID);
 
 
     ECDH();
-    
-
 
     memcpy(AESkey,sessionKey,PUB_KEY_LEN/2);
     memcpy(nounce,sessionKey+16,PUB_KEY_LEN/2);
-    //AES_init_ctx_iv(&ctx, AESkey, nounce);
-
-
     printf("\n");
 
-    
     example1();
-    //while(1);
-    //exit(1);
     return(0);
 }

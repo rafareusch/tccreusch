@@ -2,8 +2,11 @@
 ihwnew -name nonSecToSecValidation
 ihwaddclp -allargs
 
+ihwaddnet -instancename irq_
+ihwaddnet -instancename tzpcdecprot0_0
 
 ihwaddbus -instancename pBusRS  -addresswidth 32
+
 # tzBus - 41 bits of address - implements secure and non-secure address spaces
 ihwaddbus -instancename tzBus -addresswidth 41
 
@@ -49,19 +52,19 @@ ihwconnect   -instancename ram0NS -busmasterport mp -bus pBusRS \
 
 
 #
-# Bridge helio perif to non secure space - Ack and header always accesible from non-secure mode
+# Bridge perif to non secure space - Ack and header always accesible from non-secure mode
 #-loaddress 0x11001000 -hiaddress 0x11001007
-ihwaddbridge -instancename hBNSRS
-ihwaddbridge -instancename 1_hBNSRS
+ihwaddbridge -instancename bNSRS
+ihwaddbridge -instancename bRSNS
 
-ihwconnect   -instancename hBNSRS -busslaveport  sp -bus tzBus \
+ihwconnect   -instancename bNSRS -busslaveport  sp -bus tzBus \
              -loaddress 0x10011001000 -hiaddress 0x10011001002
-ihwconnect   -instancename hBNSRS -busmasterport mp -bus pBusRS \
+ihwconnect   -instancename bNSRS -busmasterport mp -bus pBusRS \
              -loaddress 0x11001000 -hiaddress 0x11001002
 
-ihwconnect   -instancename 1_hBNSRS -busslaveport  sp -bus tzBus \
+ihwconnect   -instancename bRSNS -busslaveport  sp -bus tzBus \
              -loaddress 0x10011002000 -hiaddress 0x10011002007
-ihwconnect   -instancename 1_hBNSRS -busmasterport mp -bus pBusRS \
+ihwconnect   -instancename bRSNS -busmasterport mp -bus pBusRS \
              -loaddress 0x11002000 -hiaddress 0x11002007
 
 
