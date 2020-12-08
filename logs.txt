@@ -1,0 +1,883 @@
+
+Hello from client 2!
+Hello from client 1!
+---------------------> Starting Secure Processor...!
+-----> Initializing EC keys....
+Server Private Key: 4B65E1E62A9B323E12F40039AE8C5CF25CE7BD200E4FAE0289D88BB9F3865D6C
+Server Public Key: 3B970482D2B421285741BA658F815E0A7A730358FAE4123AB0154AF0CFE45058
+
+SMC: Entering Unsecure mode
+> Server will now send it's Public Key to Client 1 and Client 2
+
+RS: Requiring write permission
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: Received Request from Secure Processor
+RS: Ready to send!
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: Received TARGET from Secure Processor 0
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: Received SIZE from Secure Processor 32
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: End of transmission between RS and NonSecToSec
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: Waiting for RNS1...
+RS: Sent a message!
+RS: Requiring write permission
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: Received Request from Secure Processor
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: RNS1 is ready to read message
+RNS: Ready to receive data from PSE
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: Transmitting SIZE to RNS
+RNS: PSE indicates size is 32
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: End of DATA transmission to RNS
+RNS: Data received: |;▒▒Ҵ!(WA▒e▒▒^
+zsX▒▒:▒J▒▒▒PX|
+
+############## CLI1 is initializing cryptographic variables...
+
+RS: Ready to send!
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: Received TARGET from Secure Processor 1
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: Received SIZE from Secure Processor 32
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: End of transmission between RS and NonSecToSec
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: Waiting for RNS2...
+RS: Sent a message!
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: RNS2 is ready to read message
+RNS: Ready to receive data from PSE
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: Transmitting SIZE to RNS
+RNS: PSE indicates size is 32
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: End of DATA transmission to RNS
+RNS: Data received: |;▒▒Ҵ!(WA▒e▒▒^
+zsX▒▒:▒J▒▒▒PX|
+
+############## CLI2 is initializing cryptographic variables...
+
+CLI 1 Private Key: HEX F1ACA979B0ABAB393FB826DDD30C143295FE469B08716BD28D8EBEDCD54A2642
+CLI 1 Public Key: 59BD8EEB937789CC83512D8D07B37F5088BA1D5D84B21757FD5A81DA156DAE23
+Sever Public Key: 3B970482D2B421285741BA658F815E0A7A730358FAE4123AB0154AF0CFE45058
+Client secret Key: F1ACA979B0ABAB393FB826DDD30C143295FE469B08716BD28D8EBEDCD54A2642
+
+#################### CLI1 is now processing the Shared Secret ####################
+
+CLI 2 Private Key: HEX 1EE860590D694BD902FB8F1F4E11EA5241B3D352E7F3FA3C731EA5707C8EA069
+CLI 2 Public Key: 6D5CDED70861D1654BBE87A76513B1F905AD79763901C3EFD8F2AEFB568C114E
+Sever Public Key: 3B970482D2B421285741BA658F815E0A7A730358FAE4123AB0154AF0CFE45058
+Client secret Key: 1EE860590D694BD902FB8F1F4E11EA5241B3D352E7F3FA3C731EA5707C8EA069
+
+#################### CLI2 is now processing the Shared Secret ####################
+
+CLI1 Shared Secret: 22599247D0CC96844A32335F2AEDA539EAF753F3A4A0ED40FC425D4F352ED4B5
+Performing hash operation
+ ------------------------------------------------------------------->  CLI1 Session Key: C02D53521C74C1D8EA23D4E2BFD6DC7271E57A710F4ABD6420B4B7D0140F0F03
+RNS: Requiring write permission
+Info (RNS TX Register) nonSecToSecValidation/nonSecToSec: RNS1 is now transmitting!
+RNS: Ready to send!
+Info (TX Header Write) nonSecToSecValidation/nonSecToSec: Write to header data was 0!
+Info (TX Header Write) nonSecToSecValidation/nonSecToSec: Write to header data was 32!
+Info (TX Write) nonSecToSecValidation/nonSecToSec: End of transmission, generating interrupt to secure processorR!
+RNS: Sent a message!
+
+----------------------------------------------------------------------------->  Received interrupt. Starting handle
+Info (Interrupt) nonSecToSecValidation/nonSecToSec: Received Interrupt ACK
+SMC: Entering Secure mode
+ -------------------------> Entering Secure mode
+Info (Secure Register Header) nonSecToSecValidation/nonSecToSec:  Header reset
+Info (RX Enable register) nonSecToSecValidation/nonSecToSec: RS allowed transmission!
+ . 0  . 0  . 0  . 0  . 32  . 0  . 0  . 0 Reading message of 32
+................................Info (Secure buffer data) nonSecToSecValidation/nonSecToSec: No message in buffer, releasing to any port write
+RS RECEIVED:
+59BD8EEB937789CC83512D8D07B37F5088BA1D5D84B21757FD5A81DA156DAE23
+Info (RX Enable register) nonSecToSecValidation/nonSecToSec: RS disabled transmission!
+SMC: Entering Unsecure mode
+------------------------------------------------------------------------------------->  INTERRUPT Leaving in secure world
+------------------------------------------------------------------------------------->  Ending Interruption
+
+
+
+
+
+############################################################################################################
+############################################# SERVER RECEIVED DATA #########################################
+#################################################  HANDLE START ############################################
+
+> SERV reports it has received Public Key from CLI1
+Starting Diffie-Hellman Key-Exchange...
+
+SMC: Entering Secure mode
+Reading DATA from secure memory
+Memory DATA read:  59BD8EEB937789CC83512D8D07B37F5088BA1D5D84B21757FD5A81DA156DAE23
+SMC: Entering Unsecure mode
+
+Client Public Key: 59BD8EEB937789CC83512D8D07B37F5088BA1D5D84B21757FD5A81DA156DAE23
+Server secret Key: 4B65E1E62A9B323E12F40039AE8C5CF25CE7BD200E4FAE0289D88BB9F3865D6C
+
+############ Server is now computing the Session Key
+CLI2 Shared Secret: 1FFB16876B046700DC9589AED136AD1A94344B9D907F18164C07B31F12BC68FC
+Performing hash operation
+ ------------------------------------------------------------------->  CLI2 Session Key: DF67E068BB606565003FFFC812EB95A338A88625A02A0AA50E75583BBF3D2FD6
+RNS: Requiring write permission
+Info (RNS Tx require ) nonSecToSecValidation/nonSecToSec: Locking buffer to RNS2
+Info (RNS TX Register) nonSecToSecValidation/nonSecToSec: RNS2 is now transmitting!
+RNS: Ready to send!
+Info (TX Header Write) nonSecToSecValidation/nonSecToSec: Write to header data was 1!
+Info (TX Header Write) nonSecToSecValidation/nonSecToSec: Write to header data was 32!
+Info (TX Write) nonSecToSecValidation/nonSecToSec: End of transmission, generating interrupt to secure processorR!
+RNS: Sent a message!
+
+############ Server and Client 1 Session Key: C02D53521C74C1D8EA23D4E2BFD6DC7271E57A710F4ABD6420B4B7D0140F0F03
+
+SMC: Entering Secure mode
+Saving session key to secure memory
+SMC: Entering Unsecure mode
+
+############################################ END HANDLE ###############################################
+
+
+----------------------------------------------------------------------------->  Received interrupt. Starting handle
+Info (Interrupt) nonSecToSecValidation/nonSecToSec: Received Interrupt ACK
+SMC: Entering Secure mode
+ -------------------------> Entering Secure mode
+Info (Secure Register Header) nonSecToSecValidation/nonSecToSec:  Header reset
+Info (RX Enable register) nonSecToSecValidation/nonSecToSec: RS allowed transmission!
+ . 1  . 0  . 0  . 0  . 32  . 0  . 0  . 0 Reading message of 32
+................................Info (Secure buffer data) nonSecToSecValidation/nonSecToSec: No message in buffer, releasing to any port write
+RS RECEIVED:
+6D5CDED70861D1654BBE87A76513B1F905AD79763901C3EFD8F2AEFB568C114E
+Info (RX Enable register) nonSecToSecValidation/nonSecToSec: RS disabled transmission!
+SMC: Entering Unsecure mode
+------------------------------------------------------------------------------------->  INTERRUPT Leaving in secure world
+------------------------------------------------------------------------------------->  Ending Interruption
+
+
+
+
+
+############################################################################################################
+############################################# SERVER RECEIVED DATA #########################################
+#################################################  HANDLE START ############################################
+
+> SERV reports it has received Public Key from CLI2
+Starting Diffie-Hellman Key-Exchange...
+
+SMC: Entering Secure mode
+Reading DATA from secure memory
+Memory DATA read:  6D5CDED70861D1654BBE87A76513B1F905AD79763901C3EFD8F2AEFB568C114E
+SMC: Entering Unsecure mode
+
+Client Public Key: 6D5CDED70861D1654BBE87A76513B1F905AD79763901C3EFD8F2AEFB568C114E
+Server secret Key: 4B65E1E62A9B323E12F40039AE8C5CF25CE7BD200E4FAE0289D88BB9F3865D6C
+
+############ Server is now computing the Session Key
+############ Server and Client 2 Session Key: DF67E068BB606565003FFFC812EB95A338A88625A02A0AA50E75583BBF3D2FD6
+
+SMC: Entering Secure mode
+Saving session key to secure memory
+SMC: Entering Unsecure mode
+
+############################################ END HANDLE ###############################################
+
+
+___________________________________________________________________________
+################# Server is starting send process to RNS1 ####################
+
+String Message: 0 Message from Server
+HEX Message: 30204D6573736167652066726F6D20536572766572000100010000006A000000
+
+SMC: Entering Secure mode
+Reading key 1 from memory
+Key on memory read: C02D53521C74C1D8EA23D4E2BFD6DC7271E57A710F4ABD6420B4B7D0140F0F03
+SMC: Entering Unsecure mode
+
+Encrypting message with AES...
+Encrypted message: 5AD65479FBCE9A7B6E7883BBDB395AADB96C4CDFA7A40CE8B5A8196A8DF9F9EC
+
+RS: Requiring write permission
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: Received Request from Secure Processor
+RS: Ready to send!
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: Received TARGET from Secure Processor 0
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: Received SIZE from Secure Processor 32
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: End of transmission between RS and NonSecToSec
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: Waiting for RNS1...
+RS: Sent a message!
+________________________________________________________________________
+######################## End of transmission ###########################
+
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: RNS1 is ready to read message
+RNS: Ready to receive data from PSE
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: Transmitting SIZE to RNS
+RNS: PSE indicates size is 32
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: End of DATA transmission to RNS
+RNS: Data received: |Z▒Ty▒Κ{nx▒▒▒9Z▒▒lLߧ▒
+赨j▒▒▒▒|
+
+
+################### CLI IS DECRYPTING #################
+
+CLI CIPHERED MESSAGE: 5AD65479FBCE9A7B6E7883BBDB395AADB96C4CDFA7A40CE8B5A8196A8DF9F9EC
+
+DECRYPTED TEXT: 0 Message from Server
+
+################### END OF DECRYPT #################
+
+
+CLI AES KEY: C02D53521C74C1D8EA23D4E2BFD6DC72
+
+CLI NOUNCE: 71E57A710F4ABD6420B4B7D0140F0F03
+
+CLI PLAIN TEXT: {from CLIENT[1] to SEC - packet 0}
+
+CLI CIPHERED TEXT: 788B69F294B618542D48DD3646A51717B43487BE47AE350E664AE15E0A40BE21
+RNS: Requiring write permission
+Info (RNS TX Register) nonSecToSecValidation/nonSecToSec: RNS1 is now transmitting!
+RNS: Ready to send!
+Info (TX Header Write) nonSecToSecValidation/nonSecToSec: Write to header data was 0!
+Info (TX Header Write) nonSecToSecValidation/nonSecToSec: Write to header data was 34!
+Info (TX Write) nonSecToSecValidation/nonSecToSec: End of transmission, generating interrupt to secure processorR!
+RNS: Sent a message!
+----------------------------------------------------------------------------->  Received interrupt. Starting handle
+Info (Interrupt) nonSecToSecValidation/nonSecToSec: Received Interrupt ACK
+SMC: Entering Secure mode
+ -------------------------> Entering Secure mode
+Info (Secure Register Header) nonSecToSecValidation/nonSecToSec:  Header reset
+Info (RX Enable register) nonSecToSecValidation/nonSecToSec: RS allowed transmission!
+ . 0  . 0  . 0  . 0  . 34  . 0  . 0  . 0 Reading message of 34
+..................................Info (Secure buffer data) nonSecToSecValidation/nonSecToSec: No message in buffer, releasing to any port write
+RS RECEIVED:
+788B69F294B618542D48DD3646A51717B43487BE47AE350E664AE15E0A40BE21307D
+Info (RX Enable register) nonSecToSecValidation/nonSecToSec: RS disabled transmission!
+SMC: Entering Unsecure mode
+------------------------------------------------------------------------------------->  INTERRUPT Leaving in secure world
+------------------------------------------------------------------------------------->  Ending Interruption
+
+
+
+
+
+############################################################################################################
+############################################# SERVER RECEIVED DATA #########################################
+#################################################  HANDLE START ############################################
+
+> SERV reports it has received a ciphered message from CLI1
+Starting AES decryption...
+
+
+
+#########################################################
+################ STARTING DECRYPT ALGORITHM #############
+#########################################################
+
+SMC: Entering Secure mode
+Reading key 1 from memory
+Key on memory read: C02D53521C74C1D8EA23D4E2BFD6DC7271E57A710F4ABD6420B4B7D0140F0F03
+SMC: Entering Unsecure mode
+
+SMC: Entering Secure mode
+Reading DATA from secure memory
+Memory DATA read:  788B69F294B618542D48DD3646A51717B43487BE47AE350E664AE15E0A40BE21
+SMC: Entering Unsecure mode
+
+Sender: RNS1
+SESSION KEY: C02D53521C74C1D8EA23D4E2BFD6DC7271E57A710F4ABD6420B4B7D0140F0F03
+
+AES KEY: C02D53521C74C1D8EA23D4E2BFD6DC72
+
+IV: 71E57A710F4ABD6420B4B7D0140F0F03
+
+CIPHERED DATA: 788B69F294B618542D48DD3646A51717B43487BE47AE350E664AE15E0A40BE21
+
+DECRYPTED TEXT: {from CLIENT[1] to SEC - packet 0}
+
+##########################################################
+##################  END OF DECRYPTION  ###################
+##########################################################
+
+
+############################################ END HANDLE ###############################################
+
+
+___________________________________________________________________________
+################# Server is starting send process to RNS2 ####################
+
+String Message: 0 Message from Server
+HEX Message: 30204D6573736167652066726F6D20536572766572000100010000006A000000
+
+SMC: Entering Secure mode
+Reading key 2 from memory
+Key on memory read: DF67E068BB606565003FFFC812EB95A338A88625A02A0AA50E75583BBF3D2FD6
+SMC: Entering Unsecure mode
+
+Encrypting message with AES...
+Encrypted message: 76836D3AF7F71077F01EF0853D9011D8DF020DFE4D78561D7C6C2EF0BA9B399D
+
+RS: Requiring write permission
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: Received Request from Secure Processor
+RS: Ready to send!
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: Received TARGET from Secure Processor 1
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: Received SIZE from Secure Processor 32
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: End of transmission between RS and NonSecToSec
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: Waiting for RNS2...
+RS: Sent a message!
+________________________________________________________________________
+######################## End of transmission ###########################
+
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: RNS2 is ready to read message
+RNS: Ready to receive data from PSE
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: Transmitting SIZE to RNS
+RNS: PSE indicates size is 32
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: End of DATA transmission to RNS
+▒MxV|l.▒9▒|eceived: |v▒m:▒▒w▒▒=▒▒▒
+
+
+################### CLI IS DECRYPTING #################
+
+CLI CIPHERED MESSAGE: 76836D3AF7F71077F01EF0853D9011D8DF020DFE4D78561D7C6C2EF0BA9B399D
+
+DECRYPTED TEXT: 0 Message from Server
+
+################### END OF DECRYPT #################
+
+
+CLI AES KEY: DF67E068BB606565003FFFC812EB95A3
+
+CLI NOUNCE: 38A88625A02A0AA50E75583BBF3D2FD6
+
+CLI PLAIN TEXT: {from CLIENT[2] to SEC - packet 0}
+
+CLI CIPHERED TEXT: 91BFA5964B7C4F14E0C4F6B21195B88A8077A18A6A5C55D209AADC6608AA0B5D
+RNS: Requiring write permission
+Info (RNS Tx require ) nonSecToSecValidation/nonSecToSec: Locking buffer to RNS2
+Info (RNS TX Register) nonSecToSecValidation/nonSecToSec: RNS2 is now transmitting!
+RNS: Ready to send!
+Info (TX Header Write) nonSecToSecValidation/nonSecToSec: Write to header data was 1!
+Info (TX Header Write) nonSecToSecValidation/nonSecToSec: Write to header data was 34!
+Info (TX Write) nonSecToSecValidation/nonSecToSec: End of transmission, generating interrupt to secure processorR!
+RNS: Sent a message!
+----------------------------------------------------------------------------->  Received interrupt. Starting handle
+Info (Interrupt) nonSecToSecValidation/nonSecToSec: Received Interrupt ACK
+SMC: Entering Secure mode
+ -------------------------> Entering Secure mode
+Info (Secure Register Header) nonSecToSecValidation/nonSecToSec:  Header reset
+Info (RX Enable register) nonSecToSecValidation/nonSecToSec: RS allowed transmission!
+ . 1  . 0  . 0  . 0  . 34  . 0  . 0  . 0 Reading message of 34
+..................................Info (Secure buffer data) nonSecToSecValidation/nonSecToSec: No message in buffer, releasing to any port write
+RS RECEIVED:
+91BFA5964B7C4F14E0C4F6B21195B88A8077A18A6A5C55D209AADC6608AA0B5D307D
+Info (RX Enable register) nonSecToSecValidation/nonSecToSec: RS disabled transmission!
+SMC: Entering Unsecure mode
+------------------------------------------------------------------------------------->  INTERRUPT Leaving in secure world
+------------------------------------------------------------------------------------->  Ending Interruption
+
+
+
+
+
+############################################################################################################
+############################################# SERVER RECEIVED DATA #########################################
+#################################################  HANDLE START ############################################
+
+> SERV reports it has received a ciphered message from CLI2
+Starting AES decryption...
+
+
+
+#########################################################
+################ STARTING DECRYPT ALGORITHM #############
+#########################################################
+
+SMC: Entering Secure mode
+Reading key 2 from memory
+Key on memory read: DF67E068BB606565003FFFC812EB95A338A88625A02A0AA50E75583BBF3D2FD6
+SMC: Entering Unsecure mode
+
+SMC: Entering Secure mode
+Reading DATA from secure memory
+Memory DATA read:  91BFA5964B7C4F14E0C4F6B21195B88A8077A18A6A5C55D209AADC6608AA0B5D
+SMC: Entering Unsecure mode
+
+Sender: RNS2
+SESSION KEY: DF67E068BB606565003FFFC812EB95A338A88625A02A0AA50E75583BBF3D2FD6
+
+AES KEY: DF67E068BB606565003FFFC812EB95A3
+
+IV: 38A88625A02A0AA50E75583BBF3D2FD6
+
+CIPHERED DATA: 91BFA5964B7C4F14E0C4F6B21195B88A8077A18A6A5C55D209AADC6608AA0B5D
+
+DECRYPTED TEXT: {from CLIENT[2] to SEC - packet 0}
+
+##########################################################
+##################  END OF DECRYPTION  ###################
+##########################################################
+
+
+############################################ END HANDLE ###############################################
+
+
+___________________________________________________________________________
+################# Server is starting send process to RNS1 ####################
+
+String Message: 0 Message from Server
+HEX Message: 30204D6573736167652066726F6D20536572766572000100010000006A000000
+
+SMC: Entering Secure mode
+Reading key 1 from memory
+Key on memory read: C02D53521C74C1D8EA23D4E2BFD6DC7271E57A710F4ABD6420B4B7D0140F0F03
+SMC: Entering Unsecure mode
+
+Encrypting message with AES...
+Encrypted message: 5AD65479FBCE9A7B6E7883BBDB395AADB96C4CDFA7A40CE8B5A8196A8DF9F9EC
+
+RS: Requiring write permission
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: Received Request from Secure Processor
+RS: Ready to send!
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: Received TARGET from Secure Processor 0
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: Received SIZE from Secure Processor 32
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: End of transmission between RS and NonSecToSec
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: Waiting for RNS1...
+RS: Sent a message!
+________________________________________________________________________
+######################## End of transmission ###########################
+
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: RNS1 is ready to read message
+RNS: Ready to receive data from PSE
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: Transmitting SIZE to RNS
+RNS: PSE indicates size is 32
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: End of DATA transmission to RNS
+RNS: Data received: |Z▒Ty▒Κ{nx▒▒▒9Z▒▒lLߧ▒
+赨j▒▒▒▒|
+
+
+################### CLI IS DECRYPTING #################
+
+CLI CIPHERED MESSAGE: 5AD65479FBCE9A7B6E7883BBDB395AADB96C4CDFA7A40CE8B5A8196A8DF9F9EC
+
+DECRYPTED TEXT: 0 Message from Server
+
+################### END OF DECRYPT #################
+
+
+CLI AES KEY: C02D53521C74C1D8EA23D4E2BFD6DC72
+
+CLI NOUNCE: 71E57A710F4ABD6420B4B7D0140F0F03
+
+CLI PLAIN TEXT: {from CLIENT[1] to SEC - packet 1}
+
+CLI CIPHERED TEXT: 788B69F294B618542D48DD3646A51717B43487BE47AE350E664AE15E0A40BE21
+RNS: Requiring write permission
+Info (RNS TX Register) nonSecToSecValidation/nonSecToSec: RNS1 is now transmitting!
+RNS: Ready to send!
+Info (TX Header Write) nonSecToSecValidation/nonSecToSec: Write to header data was 0!
+Info (TX Header Write) nonSecToSecValidation/nonSecToSec: Write to header data was 34!
+Info (TX Write) nonSecToSecValidation/nonSecToSec: End of transmission, generating interrupt to secure processorR!
+RNS: Sent a message!
+----------------------------------------------------------------------------->  Received interrupt. Starting handle
+Info (Interrupt) nonSecToSecValidation/nonSecToSec: Received Interrupt ACK
+SMC: Entering Secure mode
+ -------------------------> Entering Secure mode
+Info (Secure Register Header) nonSecToSecValidation/nonSecToSec:  Header reset
+Info (RX Enable register) nonSecToSecValidation/nonSecToSec: RS allowed transmission!
+ . 0  . 0  . 0  . 0  . 34  . 0  . 0  . 0 Reading message of 34
+..................................Info (Secure buffer data) nonSecToSecValidation/nonSecToSec: No message in buffer, releasing to any port write
+RS RECEIVED:
+788B69F294B618542D48DD3646A51717B43487BE47AE350E664AE15E0A40BE21317D
+Info (RX Enable register) nonSecToSecValidation/nonSecToSec: RS disabled transmission!
+SMC: Entering Unsecure mode
+------------------------------------------------------------------------------------->  INTERRUPT Leaving in secure world
+------------------------------------------------------------------------------------->  Ending Interruption
+
+
+
+
+
+############################################################################################################
+############################################# SERVER RECEIVED DATA #########################################
+#################################################  HANDLE START ############################################
+
+> SERV reports it has received a ciphered message from CLI1
+Starting AES decryption...
+
+
+
+#########################################################
+################ STARTING DECRYPT ALGORITHM #############
+#########################################################
+
+SMC: Entering Secure mode
+Reading key 1 from memory
+Key on memory read: C02D53521C74C1D8EA23D4E2BFD6DC7271E57A710F4ABD6420B4B7D0140F0F03
+SMC: Entering Unsecure mode
+
+SMC: Entering Secure mode
+Reading DATA from secure memory
+Memory DATA read:  788B69F294B618542D48DD3646A51717B43487BE47AE350E664AE15E0A40BE21
+SMC: Entering Unsecure mode
+
+Sender: RNS1
+SESSION KEY: C02D53521C74C1D8EA23D4E2BFD6DC7271E57A710F4ABD6420B4B7D0140F0F03
+
+AES KEY: C02D53521C74C1D8EA23D4E2BFD6DC72
+
+IV: 71E57A710F4ABD6420B4B7D0140F0F03
+
+CIPHERED DATA: 788B69F294B618542D48DD3646A51717B43487BE47AE350E664AE15E0A40BE21
+
+DECRYPTED TEXT: {from CLIENT[1] to SEC - packet 1}
+
+##########################################################
+##################  END OF DECRYPTION  ###################
+##########################################################
+
+
+############################################ END HANDLE ###############################################
+
+
+___________________________________________________________________________
+################# Server is starting send process to RNS2 ####################
+
+String Message: 0 Message from Server
+HEX Message: 30204D6573736167652066726F6D20536572766572000100010000006A000000
+
+SMC: Entering Secure mode
+Reading key 2 from memory
+Key on memory read: DF67E068BB606565003FFFC812EB95A338A88625A02A0AA50E75583BBF3D2FD6
+SMC: Entering Unsecure mode
+
+Encrypting message with AES...
+Encrypted message: 76836D3AF7F71077F01EF0853D9011D8DF020DFE4D78561D7C6C2EF0BA9B399D
+
+RS: Requiring write permission
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: Received Request from Secure Processor
+RS: Ready to send!
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: Received TARGET from Secure Processor 1
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: Received SIZE from Secure Processor 32
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: End of transmission between RS and NonSecToSec
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: Waiting for RNS2...
+RS: Sent a message!
+________________________________________________________________________
+######################## End of transmission ###########################
+
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: RNS2 is ready to read message
+RNS: Ready to receive data from PSE
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: Transmitting SIZE to RNS
+RNS: PSE indicates size is 32
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: End of DATA transmission to RNS
+▒MxV|l.▒9▒|eceived: |v▒m:▒▒w▒▒=▒▒▒
+
+
+################### CLI IS DECRYPTING #################
+
+CLI CIPHERED MESSAGE: 76836D3AF7F71077F01EF0853D9011D8DF020DFE4D78561D7C6C2EF0BA9B399D
+
+DECRYPTED TEXT: 0 Message from Server
+
+################### END OF DECRYPT #################
+
+
+CLI AES KEY: DF67E068BB606565003FFFC812EB95A3
+
+CLI NOUNCE: 38A88625A02A0AA50E75583BBF3D2FD6
+
+CLI PLAIN TEXT: {from CLIENT[2] to SEC - packet 1}
+
+CLI CIPHERED TEXT: 91BFA5964B7C4F14E0C4F6B21195B88A8077A18A6A5C55D209AADC6608AA0B5D
+RNS: Requiring write permission
+Info (RNS Tx require ) nonSecToSecValidation/nonSecToSec: Locking buffer to RNS2
+Info (RNS TX Register) nonSecToSecValidation/nonSecToSec: RNS2 is now transmitting!
+RNS: Ready to send!
+Info (TX Header Write) nonSecToSecValidation/nonSecToSec: Write to header data was 1!
+Info (TX Header Write) nonSecToSecValidation/nonSecToSec: Write to header data was 34!
+Info (TX Write) nonSecToSecValidation/nonSecToSec: End of transmission, generating interrupt to secure processorR!
+RNS: Sent a message!
+----------------------------------------------------------------------------->  Received interrupt. Starting handle
+Info (Interrupt) nonSecToSecValidation/nonSecToSec: Received Interrupt ACK
+SMC: Entering Secure mode
+ -------------------------> Entering Secure mode
+Info (Secure Register Header) nonSecToSecValidation/nonSecToSec:  Header reset
+Info (RX Enable register) nonSecToSecValidation/nonSecToSec: RS allowed transmission!
+ . 1  . 0  . 0  . 0  . 34  . 0  . 0  . 0 Reading message of 34
+..................................Info (Secure buffer data) nonSecToSecValidation/nonSecToSec: No message in buffer, releasing to any port write
+RS RECEIVED:
+91BFA5964B7C4F14E0C4F6B21195B88A8077A18A6A5C55D209AADC6608AA0B5D317D
+Info (RX Enable register) nonSecToSecValidation/nonSecToSec: RS disabled transmission!
+SMC: Entering Unsecure mode
+------------------------------------------------------------------------------------->  INTERRUPT Leaving in secure world
+------------------------------------------------------------------------------------->  Ending Interruption
+
+
+
+
+
+############################################################################################################
+############################################# SERVER RECEIVED DATA #########################################
+#################################################  HANDLE START ############################################
+
+> SERV reports it has received a ciphered message from CLI2
+Starting AES decryption...
+
+
+
+#########################################################
+################ STARTING DECRYPT ALGORITHM #############
+#########################################################
+
+SMC: Entering Secure mode
+Reading key 2 from memory
+Key on memory read: DF67E068BB606565003FFFC812EB95A338A88625A02A0AA50E75583BBF3D2FD6
+SMC: Entering Unsecure mode
+
+SMC: Entering Secure mode
+Reading DATA from secure memory
+Memory DATA read:  91BFA5964B7C4F14E0C4F6B21195B88A8077A18A6A5C55D209AADC6608AA0B5D
+SMC: Entering Unsecure mode
+
+Sender: RNS2
+SESSION KEY: DF67E068BB606565003FFFC812EB95A338A88625A02A0AA50E75583BBF3D2FD6
+
+AES KEY: DF67E068BB606565003FFFC812EB95A3
+
+IV: 38A88625A02A0AA50E75583BBF3D2FD6
+
+CIPHERED DATA: 91BFA5964B7C4F14E0C4F6B21195B88A8077A18A6A5C55D209AADC6608AA0B5D
+
+DECRYPTED TEXT: {from CLIENT[2] to SEC - packet 1}
+
+##########################################################
+##################  END OF DECRYPTION  ###################
+##########################################################
+
+
+############################################ END HANDLE ###############################################
+
+
+___________________________________________________________________________
+################# Server is starting send process to RNS1 ####################
+
+String Message: 1 Message from Server
+HEX Message: 31204D6573736167652066726F6D20536572766572000100010000006A000000
+
+SMC: Entering Secure mode
+Reading key 1 from memory
+Key on memory read: C02D53521C74C1D8EA23D4E2BFD6DC7271E57A710F4ABD6420B4B7D0140F0F03
+SMC: Entering Unsecure mode
+
+Encrypting message with AES...
+Encrypted message: CFA0A42CC2FB921D93CE2FA229A6B68A0FE65A1E0C794617CE82E6CBF3DF32B3
+
+RS: Requiring write permission
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: Received Request from Secure Processor
+RS: Ready to send!
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: Received TARGET from Secure Processor 0
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: Received SIZE from Secure Processor 32
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: End of transmission between RS and NonSecToSec
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: Waiting for RNS1...
+RS: Sent a message!
+________________________________________________________________________
+######################## End of transmission ###########################
+
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: RNS1 is ready to read message
+RNS: Ready to receive data from PSE
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: Transmitting SIZE to RNS
+RNS: PSE indicates size is 32
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: End of DATA transmission to RNS
+RNS: Data received: |Ϡ▒,▒▒▒▒/▒)▒▒▒▒Z
+yF΂▒▒▒▒2▒|
+
+
+################### CLI IS DECRYPTING #################
+
+CLI CIPHERED MESSAGE: CFA0A42CC2FB921D93CE2FA229A6B68A0FE65A1E0C794617CE82E6CBF3DF32B3
+
+DECRYPTED TEXT: 1 Message from Server
+
+################### END OF DECRYPT #################
+
+
+CLI AES KEY: C02D53521C74C1D8EA23D4E2BFD6DC72
+
+CLI NOUNCE: 71E57A710F4ABD6420B4B7D0140F0F03
+
+CLI PLAIN TEXT: {from CLIENT[1] to SEC - packet 2}
+
+CLI CIPHERED TEXT: 788B69F294B618542D48DD3646A51717B43487BE47AE350E664AE15E0A40BE21
+RNS: Requiring write permission
+Info (RNS TX Register) nonSecToSecValidation/nonSecToSec: RNS1 is now transmitting!
+RNS: Ready to send!
+Info (TX Header Write) nonSecToSecValidation/nonSecToSec: Write to header data was 0!
+Info (TX Header Write) nonSecToSecValidation/nonSecToSec: Write to header data was 34!
+Info (TX Write) nonSecToSecValidation/nonSecToSec: End of transmission, generating interrupt to secure processorR!
+RNS: Sent a message!
+######### NONSEC 1 ENDED
+----------------------------------------------------------------------------->  Received interrupt. Starting handle
+Info (Interrupt) nonSecToSecValidation/nonSecToSec: Received Interrupt ACK
+SMC: Entering Secure mode
+ -------------------------> Entering Secure mode
+Info (Secure Register Header) nonSecToSecValidation/nonSecToSec:  Header reset
+Info (RX Enable register) nonSecToSecValidation/nonSecToSec: RS allowed transmission!
+ . 0  . 0  . 0  . 0  . 34  . 0  . 0  . 0 Reading message of 34
+..................................Info (Secure buffer data) nonSecToSecValidation/nonSecToSec: No message in buffer, releasing to any port write
+RS RECEIVED:
+788B69F294B618542D48DD3646A51717B43487BE47AE350E664AE15E0A40BE21327D
+Info (RX Enable register) nonSecToSecValidation/nonSecToSec: RS disabled transmission!
+SMC: Entering Unsecure mode
+------------------------------------------------------------------------------------->  INTERRUPT Leaving in secure world
+------------------------------------------------------------------------------------->  Ending Interruption
+
+
+
+
+
+############################################################################################################
+############################################# SERVER RECEIVED DATA #########################################
+#################################################  HANDLE START ############################################
+
+> SERV reports it has received a ciphered message from CLI1
+Starting AES decryption...
+
+
+
+#########################################################
+################ STARTING DECRYPT ALGORITHM #############
+#########################################################
+
+SMC: Entering Secure mode
+Reading key 1 from memory
+Key on memory read: C02D53521C74C1D8EA23D4E2BFD6DC7271E57A710F4ABD6420B4B7D0140F0F03
+SMC: Entering Unsecure mode
+
+SMC: Entering Secure mode
+Reading DATA from secure memory
+Memory DATA read:  788B69F294B618542D48DD3646A51717B43487BE47AE350E664AE15E0A40BE21
+SMC: Entering Unsecure mode
+
+Sender: RNS1
+SESSION KEY: C02D53521C74C1D8EA23D4E2BFD6DC7271E57A710F4ABD6420B4B7D0140F0F03
+
+AES KEY: C02D53521C74C1D8EA23D4E2BFD6DC72
+
+IV: 71E57A710F4ABD6420B4B7D0140F0F03
+
+CIPHERED DATA: 788B69F294B618542D48DD3646A51717B43487BE47AE350E664AE15E0A40BE21
+
+DECRYPTED TEXT: {from CLIENT[1] to SEC - packet 2}
+
+##########################################################
+##################  END OF DECRYPTION  ###################
+##########################################################
+
+
+############################################ END HANDLE ###############################################
+
+
+___________________________________________________________________________
+################# Server is starting send process to RNS2 ####################
+
+String Message: 1 Message from Server
+HEX Message: 31204D6573736167652066726F6D20536572766572000100010000006A000000
+
+SMC: Entering Secure mode
+Reading key 2 from memory
+Key on memory read: DF67E068BB606565003FFFC812EB95A338A88625A02A0AA50E75583BBF3D2FD6
+SMC: Entering Unsecure mode
+
+Encrypting message with AES...
+Encrypted message: CF32C7E97CF9376C9C512B615D9756E65C99DB909884E8E749C0CC163763431E
+
+RS: Requiring write permission
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: Received Request from Secure Processor
+RS: Ready to send!
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: Received TARGET from Secure Processor 1
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: Received SIZE from Secure Processor 32
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: End of transmission between RS and NonSecToSec
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: Waiting for RNS2...
+RS: Sent a message!
+________________________________________________________________________
+######################## End of transmission ###########################
+
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: RNS2 is ready to read message
+RNS: Ready to receive data from PSE
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: Transmitting SIZE to RNS
+RNS: PSE indicates size is 32
+Info (RS to RNS) nonSecToSecValidation/nonSecToSec: End of DATA transmission to RNS
+RNS: Data received: |▒2▒▒|▒7l▒Q+a]▒V▒\▒ې▒▒▒▒I▒▒7cC|
+
+
+################### CLI IS DECRYPTING #################
+
+CLI CIPHERED MESSAGE: CF32C7E97CF9376C9C512B615D9756E65C99DB909884E8E749C0CC163763431E
+
+DECRYPTED TEXT: 1 Message from Server
+
+################### END OF DECRYPT #################
+
+
+CLI AES KEY: DF67E068BB606565003FFFC812EB95A3
+
+CLI NOUNCE: 38A88625A02A0AA50E75583BBF3D2FD6
+
+CLI PLAIN TEXT: {from CLIENT[2] to SEC - packet 2}
+
+CLI CIPHERED TEXT: 91BFA5964B7C4F14E0C4F6B21195B88A8077A18A6A5C55D209AADC6608AA0B5D
+RNS: Requiring write permission
+Info (RNS Tx require ) nonSecToSecValidation/nonSecToSec: Locking buffer to RNS2
+Info (RNS TX Register) nonSecToSecValidation/nonSecToSec: RNS2 is now transmitting!
+RNS: Ready to send!
+Info (TX Header Write) nonSecToSecValidation/nonSecToSec: Write to header data was 1!
+Info (TX Header Write) nonSecToSecValidation/nonSecToSec: Write to header data was 34!
+Info (TX Write) nonSecToSecValidation/nonSecToSec: End of transmission, generating interrupt to secure processorR!
+RNS: Sent a message!
+######### NONSEC 2 ENDED
+----------------------------------------------------------------------------->  Received interrupt. Starting handle
+Info (Interrupt) nonSecToSecValidation/nonSecToSec: Received Interrupt ACK
+SMC: Entering Secure mode
+ -------------------------> Entering Secure mode
+Info (Secure Register Header) nonSecToSecValidation/nonSecToSec:  Header reset
+Info (RX Enable register) nonSecToSecValidation/nonSecToSec: RS allowed transmission!
+ . 1  . 0  . 0  . 0  . 34  . 0  . 0  . 0 Reading message of 34
+..................................Info (Secure buffer data) nonSecToSecValidation/nonSecToSec: No message in buffer, releasing to any port write
+RS RECEIVED:
+91BFA5964B7C4F14E0C4F6B21195B88A8077A18A6A5C55D209AADC6608AA0B5D327D
+Info (RX Enable register) nonSecToSecValidation/nonSecToSec: RS disabled transmission!
+SMC: Entering Unsecure mode
+------------------------------------------------------------------------------------->  INTERRUPT Leaving in secure world
+------------------------------------------------------------------------------------->  Ending Interruption
+
+
+
+
+
+############################################################################################################
+############################################# SERVER RECEIVED DATA #########################################
+#################################################  HANDLE START ############################################
+
+> SERV reports it has received a ciphered message from CLI2
+Starting AES decryption...
+
+
+
+#########################################################
+################ STARTING DECRYPT ALGORITHM #############
+#########################################################
+
+SMC: Entering Secure mode
+Reading key 2 from memory
+Key on memory read: DF67E068BB606565003FFFC812EB95A338A88625A02A0AA50E75583BBF3D2FD6
+SMC: Entering Unsecure mode
+
+SMC: Entering Secure mode
+Reading DATA from secure memory
+Memory DATA read:  91BFA5964B7C4F14E0C4F6B21195B88A8077A18A6A5C55D209AADC6608AA0B5D
+SMC: Entering Unsecure mode
+
+Sender: RNS2
+SESSION KEY: DF67E068BB606565003FFFC812EB95A338A88625A02A0AA50E75583BBF3D2FD6
+
+AES KEY: DF67E068BB606565003FFFC812EB95A3
+
+IV: 38A88625A02A0AA50E75583BBF3D2FD6
+
+CIPHERED DATA: 91BFA5964B7C4F14E0C4F6B21195B88A8077A18A6A5C55D209AADC6608AA0B5D
+
+DECRYPTED TEXT: {from CLIENT[2] to SEC - packet 2}
+
+##########################################################
+##################  END OF DECRYPTION  ###################
+##########################################################
+
+
+############################################ END HANDLE ###############################################
+
+
+###### R U N      E N D E D
