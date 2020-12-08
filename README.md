@@ -15,3 +15,11 @@ make build
 make run
 
 
+###################################
+To run with reports enabled, insted of `make run` use:
+
+harness.exe --verbose --modulefile platform/model.so --program RScpu=application/secureApplication.ARM_CORTEX_A8.elf  --program cpuRNS1=application/nonSecureApplication1.ARM_CORTEX_A8.elf  --program cpuRNS2=application/nonSecureApplication2.ARM_CORTEX_A8.elf
+
+
+
+
