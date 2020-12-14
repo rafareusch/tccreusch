@@ -19,10 +19,10 @@
 //  RS to RNS
 void requireToSend()
 {
-    printf("RS: Requiring write permission\n");
+    printf("SERV: Requiring write permission\n");
     (*(char*) RG_REQ) = 1;
     while(*RG_REQ_ACK != 1);
-    printf("RS: Ready to send!\n");
+    printf("SERV: Ready to send!\n");
    
 }
 
@@ -35,7 +35,7 @@ void sendMessage(int target,char* data)
 
     if (strlen(data) > PACKET_SIZE){
         size = PACKET_SIZE;
-        printf("RS: PACKET_SIZE OVERFLOW. Message Size must be under %d bits\n", PACKET_SIZE);
+        printf("SERV: PACKET_SIZE OVERFLOW. Message Size must be under %d bits\n", PACKET_SIZE);
     } else {
         size = strlen(data);
     }
@@ -49,7 +49,7 @@ void sendMessage(int target,char* data)
     }
 
 
-    printf("RS: Sent a message!\n");
+    printf("SERV: Sent a message!\n");
 }
 
 
@@ -83,7 +83,7 @@ void receiveMessage(int size)
         nonSecureMemoryBuffer[i] = *(RG_READ_DATA);
         //printf("%c",nonSecureMemoryBuffer[i]);
     }
-    printf("RS RECEIVED:\n");
+    printf("SERVER RECEIVED:\n");
     hexdump(nonSecureMemoryBuffer,  size);
     fflush(stdout);
 

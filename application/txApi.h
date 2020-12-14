@@ -16,15 +16,15 @@ void sendMessage(int sender,char* data)
     int size = 0;
 
     // REQUESTING WRITE
-    printf("RNS: Requiring write permission\n");
+    printf("CLI: Requiring write permission\n");
     (*(char*) RG_TX_REQ) = 1;
     while(*RG_TX_REQ_ACK != 1);
-    printf("RNS: Ready to send!\n");
+    printf("CLI: Ready to send!\n");
 
     // SENDING MESSAGE
     if (strlen(data) > PACKET_SIZE){
         size = PACKET_SIZE;
-        printf("RNS: PACKET_SIZE OVERFLOW. Message Size must be under %d bits\n", PACKET_SIZE);
+        printf("CLI: PACKET_SIZE OVERFLOW. Message Size must be under %d bits\n", PACKET_SIZE);
     } else {
         size = strlen(data);
     }
@@ -43,16 +43,16 @@ void sendMessage(int sender,char* data)
 void requireToRead(char * data){
 
     while(*RG_RX_DATA_READY != 1);
-    printf("RNS: Ready to receive data from PSE\n");
+    printf("CLI: Ready to receive data from PSE\n");
     int i;
     int msgSize = *RG_TX_WRITE_HEADER;
 
-    printf("RNS: PSE indicates size is %d\n",msgSize);
+    printf("CLI: PSE indicates size is %d\n",msgSize);
     for (i = 0; i < msgSize ; i++)
         data[i] = *RG_TX_WRITE_DATA;
     data[i] = '\0';
 
-    printf("RNS: Data received: |%s|\n",data);
+    printf("CLI: Data received: |%s|\n",data);
 
 
 

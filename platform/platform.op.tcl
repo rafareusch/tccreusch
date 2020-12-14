@@ -1,5 +1,5 @@
 
-ihwnew -name nonSecToSecValidation
+ihwnew -name secBridgeValidation
 ihwaddclp -allargs
 
 ihwaddnet -instancename irq_
@@ -112,25 +112,25 @@ ihwconnect   -instancename ramRNS2 -busslaveport sp1 -bus pBusRNS2 \
 
 
 
-# NonSecToSec
-ihwaddperipheral -instancename nonSecToSec -type nonSecToSec -modelfile peripheral/pse
+# secBridge
+ihwaddperipheral -instancename secBridge -type secBridge -modelfile peripheral/pse
 
-ihwconnect       -instancename nonSecToSec -netport enable -net tzpcdecprot0_0
-ihwconnect       -instancename nonSecToSec -netport newMessageAvailable -net irq_
+ihwconnect       -instancename secBridge -netport enable -net tzpcdecprot0_0
+ihwconnect       -instancename secBridge -netport newMessageAvailable -net irq_
 
-ihwsetparameter    -handle       nonSecToSec -name portSize    -value        0x1000   \
+ihwsetparameter    -handle       secBridge -name portSize    -value        0x1000   \
 -type uns64
 
-ihwconnect      -instancename nonSecToSec -busslaveport readSecurePort -bus pBusRS \
+ihwconnect      -instancename secBridge -busslaveport readSecurePort -bus pBusRS \
                 -loaddress 0x11001000 -hiaddress 0x1100107F
 
-ihwconnect      -instancename nonSecToSec -busslaveport writeSecurePort -bus pBusRS \
+ihwconnect      -instancename secBridge -busslaveport writeSecurePort -bus pBusRS \
                 -loaddress 0x11002000 -hiaddress 0x1100207F
 
-ihwconnect      -instancename nonSecToSec -busslaveport rxNonSecurePort1 \
+ihwconnect      -instancename secBridge -busslaveport rxNonSecurePort1 \
                  -bus pBus -loaddress 0x11001000 -hiaddress 0x1100107f
                 
-ihwconnect      -instancename nonSecToSec -busslaveport rxNonSecurePort2 \
+ihwconnect      -instancename secBridge -busslaveport rxNonSecurePort2 \
                  -bus pBusRNS2 -loaddress 0x11001000 -hiaddress 0x1100107f
 
                 

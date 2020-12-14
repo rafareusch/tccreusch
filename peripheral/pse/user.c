@@ -75,11 +75,11 @@ void requireToSend(int rnsRequiring, int data)
         if(canTransmit)
         {
             rnsRequest[rnsRequiring] = LOCKED;
-            bhmMessage("I","RNS Tx require ","Locking buffer to RNS%d", rnsRequiring + 1);
+            bhmMessage("I","CLI Tx require ","Locking buffer to CLI%d", rnsRequiring + 1);
         }
         else
         {
-            bhmMessage("I","RNS Tx require ","RNS%d is not allowed to send", rnsRequiring + 1);
+            bhmMessage("I","CLI Tx require ","CLI%d is not allowed to send", rnsRequiring + 1);
         }
         
     }
@@ -91,11 +91,11 @@ void requireToSend(int rnsRequiring, int data)
 PPM_NET_CB(updateEnable) {
     if(value == 1)
     {
-        bhmMessage("I","RX Enable register","RS allowed transmission!");
+        bhmMessage("I","RX Enable register","SERV allowed transmission!");
     }
     else
     {
-        bhmMessage("I","RX Enable register","RS disabled transmission!");
+        bhmMessage("I","RX Enable register","SERV disabled transmission!");
     }
     
     transmissionEnabled = value;
@@ -142,7 +142,7 @@ Bool bufferRSUsed = False;
 
 PPM_REG_WRITE_CB(ReqRSWrite) 
 {
-    bhmMessage("I","RS to RNS","Received Request from Secure Processor");
+    bhmMessage("I","SERV to CLI","Received Request from Secure Processor");
     //ppmWriteNet(handles.newMessageAvailable, 0);
 }
 
@@ -157,7 +157,7 @@ PPM_REG_READ_CB(AckRSRead)
     //bhmMessage("I","Interrupt","Reading ACK");
     if (bufferRSUsed == False){
         return 1;
-         bhmMessage("I","RS to RNS","RS is allowed to transmit");
+         bhmMessage("I","SERV to CLI","SERV is allowed to transmit");
     } else {
         return 0; // THIS SHOULD BE 0. 1 IS USED FOR TESTING
     }
@@ -169,7 +169,7 @@ PPM_REG_READ_CB(dataReadyRNS1)
 
     // DEVE SETAR MODO DE TRANSMISSAO CONTRARIA
     if (bufferRSUsed == true && RSmsgHeader.target == 0 ){
-        bhmMessage("I","RS to RNS","RNS1 is ready to read message");
+        bhmMessage("I","SERV to CLI","CLI1 is ready to read message");
         return 1;
     } else {
         
@@ -183,7 +183,7 @@ PPM_REG_READ_CB(dataReadyRNS2)
     //DEVE SETAR MODO DE TRANSMISSAO CONTRARIA
     
     if (bufferRSUsed == true && RSmsgHeader.target == 1 ){
-        bhmMessage("I","RS to RNS","RNS2 is ready to read message");
+        bhmMessage("I","SERV to CLI","CLI2 is ready to read message");
         return 1;
     } else {
         
@@ -198,12 +198,12 @@ PPM_REG_WRITE_CB(headerRSWrite)
     switch (offset){
         case 0:
          RSmsgHeader.target = data;
-         bhmMessage("I","RS to RNS","Received TARGET from Secure Processor %d", data);
+         bhmMessage("I","SERV to CLI","Received TARGET from Secure Processor %d", data);
          offset++;
          break;
         case 1:
          RSmsgHeader.messageSize = data;
-         bhmMessage("I","RS to RNS","Received SIZE from Secure Processor %d", data);
+         bhmMessage("I","SERV to CLI","Received SIZE from Secure Processor %d", data);
          offset = 0;
     }
 }
@@ -216,8 +216,8 @@ PPM_REG_WRITE_CB(dataRSWrite)
     //bhmMessage("I","RS to RNS","Receiving DATA from Secure Processor %c", data);
     bufferRS[offset] = data;
     if (offset == RSmsgHeader.messageSize-1){
-        bhmMessage("I","RS to RNS","End of transmission between RS and NonSecToSec");
-        bhmMessage("I","RS to RNS","Waiting for RNS%d...",RSmsgHeader.target+1);
+        bhmMessage("I","SERV to CLI","End of transmission between SERVER and secBridge");
+        bhmMessage("I","SERV to CLI","Waiting for CLI%d...",RSmsgHeader.target+1);
         offset = 0;
         bufferRSUsed = true;
         // int i = 0;
@@ -234,7 +234,7 @@ PPM_REG_WRITE_CB(dataRSWrite)
 PPM_REG_READ_CB(txReadHeader) 
 {
     //DEVE SETAR MODO DE TRANSMISSAO CONTRARIA
-    bhmMessage("I","RS to RNS","Transmitting SIZE to RNS");
+    bhmMessage("I","SERV to CLI","Transmitting SIZE to CLI");
     return RSmsgHeader.messageSize;
 } 
 
@@ -248,7 +248,7 @@ PPM_REG_READ_CB(txRead)
 
     if (offset == RSmsgHeader.messageSize-1){
         bufferRSUsed = false;
-        bhmMessage("I","RS to RNS","End of DATA transmission to RNS");
+        bhmMessage("I","SERV to CLI","End of DATA transmission to CLI");
         offset = -1;
         
     }
@@ -388,7 +388,7 @@ PPM_REG_WRITE_CB(txWriteHeader)
     else
     {
        
-        bhmMessage("I","TX Header Write","RNS%d is not transmitting!", rnsWriting +1);
+        bhmMessage("I","TX Header Write","CLI%d is not transmitting!", rnsWriting +1);
     }
 }
 char bufferRNS[PACKET_SIZE];
@@ -408,7 +408,7 @@ PPM_REG_WRITE_CB(txWrite)
         }
         if(rnsWriteOffset == header.messageSize)
         {
-            bhmMessage("I","TX Write","End of transmission, generating interrupt to secure processorR!");
+            bhmMessage("I","TX Write","End of transmission, generating interrupt to secure processor!");
             ppmWriteNet(handles.newMessageAvailable, 1);
             rnsWriteOffset = 0;
             //bhmMessage("I","TX Write","%s",bufferRNS);
@@ -431,7 +431,7 @@ Bool canGivenRNSTransmit(int cpuRNSId)
         
         ret = True;
         rnsRequest[cpuRNSId] = TRANSMITTING;
-        bhmMessage("I","RNS TX Register","RNS%d is now transmitting!", cpuRNSId+1 );
+        bhmMessage("I","CLI TX Register","CLI%d is now transmitting!", cpuRNSId+1 );
 
     }
     return ret;

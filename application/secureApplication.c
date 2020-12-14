@@ -266,7 +266,7 @@ unsigned char msg1[64] = {0xCF,0xA0,0xA4,0x2C,0xC2,0xFB,0x92,0x1D,0x93,0xCE,0x2F
 
 void sendProcess(int target, int command){
     printf("___________________________________________________________________________\n");
-    printf("################# Server is starting send process to RNS%d ####################\n\n",target+1);
+    printf("################# Server is starting send process to CLI%d ####################\n\n",target+1);
     
     char messageOut[100];
 
@@ -380,7 +380,7 @@ void decryptMessage(){
     memcpy(nounce,keyFromMemory+16,PUB_KEY_LEN/2);
 
 
-    printf("Sender: RNS%d",messageSender+1);
+    printf("Sender: CLI%d",messageSender+1);
     printf("\nSESSION KEY: ") ;
     hexdump((char *)&keyFromMemory,  PUB_KEY_LEN);
     fflush(stdout);
@@ -551,7 +551,7 @@ int main()
 { 
     received = 0;     
 
-    printf("---------------------> Starting Secure Processor...!\n");
+    printf("---------------------> Starting Server Processor...!\n");
     printf("-----> Initializing EC keys....\n");
    
     // Boot for secure world
